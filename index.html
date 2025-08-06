@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem-Pengundian</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>SISTEM PENGUNDIAN PEMILIHAN TOKOH MURID</h1>
+    <p>Membolehkan warga sekolah mengundi secara digital bagi memilih tokoh murid terbaik.</p>
+    <form id="voteForm" method="POST" action="index.php">
+        <label for="student">Pilih Tokoh Murid:</label>
+        <select name="student" id="student" required>
+            <option value="">-- Pilih --</option>
+            <option value="Ali">Ali</option>
+            <option value="Siti">Siti</option>
+            <option value="Ahmad">Ahmad</option>
+        </select>
+        <button type="submit">Undi</button>
+    </form>
+    <div id="result"></div>
+    <script src="script.js"></script>
+</body>
+</html>

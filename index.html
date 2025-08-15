@@ -18,6 +18,7 @@
                 <button id="homeNavBtn" onclick="showSection('home')">Home</button>
                 <button id="signupNavBtn" onclick="showSection('signup')">Sign Up</button>
                 <button id="signinNavBtn" onclick="showSection('signin')">Sign In</button>
+                <button id="adminSignInNavBtn" onclick="window.location.href='admin.html'">Admin Sign In</button>
                 <button id="logoutNavBtn" style="display:none;" onclick="logout()">Logout</button>
                 <button id="adminNavBtn" style="display:none;" onclick="showSection('admin')">Admin</button>
             </div>
@@ -35,14 +36,20 @@
     <!-- Voting area (shown after login) -->
     <div id="vote-section" style="display:none;">
         <form id="voteForm" method="POST" action="#">
-            <label for="student">Pilih Jawatan untuk Diundi:</label>
-            <select name="student" id="student" required>
+            <label for="position">Pilih Jawatan untuk Diundi:</label>
+            <select name="position" id="position" required>
                 <option value="">-- Pilih Jawatan --</option>
                 <option value="Pengerusi">Pengerusi</option>
                 <option value="Naib Pengerusi">Naib Pengerusi</option>
                 <option value="Setiausaha">Setiausaha</option>
                 <option value="Bendahari">Bendahari</option>
             </select>
+
+            <label for="student">Pilih Calon (Orang):</label>
+            <select name="student" id="student" required>
+                <option value="">-- Pilih Calon --</option>
+            </select>
+
             <button id="voteSubmit" type="button">Undi</button>
         </form>
         <div id="result"></div>
@@ -90,8 +97,10 @@
         document.getElementById('signup-section').style.display = (section === 'signup') ? 'block' : 'none';
         document.getElementById('signin-section').style.display = (section === 'signin') ? 'block' : 'none';
         document.getElementById('admin-section').style.display = (section === 'admin') ? 'block' : 'none';
-        // Only show vote-section when on home and logged in
-        if (section === 'home' && localStorage.getItem('isLoggedIn') === 'true') {
+        // Only show vote-section when on home and a non-admin user is logged in
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+        if (section === 'home' && isLoggedIn && !isAdmin) {
             document.getElementById('vote-section').style.display = 'block';
             document.getElementById('vote-login-msg').style.display = 'none';
         } else if (section !== 'home') {
@@ -104,12 +113,14 @@
         const isAdmin = localStorage.getItem('isAdmin') === 'true';
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         document.getElementById('adminNavBtn').style.display = isAdmin ? 'inline-block' : 'none';
+    // Show admin sign-in link only when not admin
+    document.getElementById('adminSignInNavBtn').style.display = (!isAdmin && !isLoggedIn) ? 'inline-block' : 'none';
         document.getElementById('signupNavBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('signinNavBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('logoutNavBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
 
-        if (isLoggedIn) {
-            // Show vote section only when on home
+        if (isLoggedIn && !isAdmin) {
+            // Show vote section only for non-admin users when on home
             if (document.getElementById('home-section').style.display !== 'none') {
                 document.getElementById('vote-section').style.display = 'block';
                 document.getElementById('vote-login-msg').style.display = 'none';
@@ -117,11 +128,57 @@
                 document.getElementById('vote-section').style.display = 'none';
             }
         } else {
+            // hide vote section for admins and for anonymous users
             document.getElementById('vote-section').style.display = 'none';
-            document.getElementById('vote-login-msg').style.display = 'block';
+            // show login prompt only when not logged in at all
+            document.getElementById('vote-login-msg').style.display = isLoggedIn ? 'none' : 'block';
         }
+    // Refresh vote controls (disable if already voted client-side)
+    try { updateVoteControls(); } catch (e) { /* ignore if helper not yet defined */ }
     }
     updateVoteVisibility();
+
+    // Server-backed enforcement: fetch positions this user already voted for from PHP
+    let serverVotedPositions = [];
+    async function fetchVotedPositionsFromServer() {
+        serverVotedPositions = [];
+        try {
+            const res = await fetch('index.php?action=my_votes', { credentials: 'same-origin' });
+            if (!res.ok) return;
+            const json = await res.json();
+            if (Array.isArray(json)) serverVotedPositions = json;
+        } catch (e) { /* ignore */ }
+        updateVoteControls();
+    }
+    function hasVotedPosition(position) {
+        return serverVotedPositions.includes(position);
+    }
+    function updateVoteControls() {
+        const positionEl = document.getElementById('position');
+        const voteBtn = document.getElementById('voteSubmit');
+        if (!positionEl || !voteBtn) return;
+        const pos = positionEl.value;
+        if (!pos) {
+            voteBtn.disabled = false;
+            voteBtn.textContent = 'Undi';
+            return;
+        }
+        if (hasVotedPosition(pos)) {
+            voteBtn.disabled = true;
+            voteBtn.textContent = 'Sudah Mengundi untuk ' + pos;
+        } else {
+            voteBtn.disabled = false;
+            voteBtn.textContent = 'Undi';
+        }
+    }
+
+    // Observe changes to position select to refresh controls
+    const posEl = document.getElementById('position');
+    if (posEl) {
+        posEl.addEventListener('change', updateVoteControls);
+        // initial update
+        updateVoteControls();
+    }
 
     function logout() {
         localStorage.removeItem('isLoggedIn');

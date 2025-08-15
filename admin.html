@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ms">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Log Masuk Admin — Sistem Pengundian</title>
+    <style>
+        :root{--bg:#f4f7fb;--card:#fff;--accent:#2c7be5;--muted:#6b7280}
+        html,body{height:100%}
+        body{margin:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#eef6ff,var(--bg));font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
+        .card{width:100%;max-width:420px;background:var(--card);padding:28px;border-radius:12px;box-shadow:0 6px 30px rgba(20,40,80,0.08);}
+        h1{margin:0 0 8px;font-size:20px}
+        p.lead{margin:0 0 18px;color:var(--muted);font-size:14px}
+        label{display:block;margin-top:10px;font-size:13px;color:#333}
+        input[type=text],input[type=password]{width:100%;padding:10px 12px;border:1px solid #e6eef7;border-radius:8px;margin-top:6px;font-size:14px}
+        button.primary{width:100%;padding:10px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:600;margin-top:16px}
+        .note{font-size:13px;color:var(--muted);margin-top:12px;text-align:center}
+        .msg{margin-top:12px;text-align:center;font-weight:700}
+        .small-link{display:block;margin-top:10px;text-align:center;color:var(--accent);text-decoration:none}
+    </style>
+</head>
+<body>
+    <div class="card" role="main">
+        <h1>Log Masuk Admin</h1>
+        <p class="lead">Sila log masuk menggunakan akaun pentadbir untuk mengurus undian dan pengguna.</p>
+        <form id="adminSignin">
+            <input type="hidden" name="action" value="signin">
+            <label>Username
+                <input type="text" name="username" required autocomplete="username">
+            </label>
+            <label>Password
+                <input type="password" name="password" required autocomplete="current-password">
+            </label>
+            <button class="primary" type="submit">Log Masuk</button>
+        </form>
+        <div id="msg" class="msg" aria-live="polite"></div>
+        <a class="small-link" href="index.html">Kembali ke laman utama</a>
+    </div>
+
+    <script>
+        const form = document.getElementById('adminSignin');
+        const msg = document.getElementById('msg');
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            msg.textContent = 'Memproses...';
+            const fd = new FormData(form);
+            fetch('index.php', { method: 'POST', credentials: 'same-origin', body: fd })
+                .then(r => r.text())
+                .then(txt => {
+                    msg.textContent = txt;
+                    const lower = (txt||'').toLowerCase();
+                    if (lower.includes('log masuk') && lower.includes('admin')) {
+                        localStorage.setItem('isLoggedIn','true');
+                        localStorage.setItem('isAdmin','true');
+                        // small delay for UX
+                        setTimeout(() => window.location.href = 'index.html', 600);
+                    } else {
+                        msg.style.color = '#c0392b';
+                    }
+                })
+                .catch(err => {
+                    msg.textContent = 'Ralat rangkaian.';
+                    msg.style.color = '#c0392b';
+                });
+        });
+    </script>
+</body>
+</html>

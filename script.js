@@ -2,6 +2,32 @@ document.addEventListener('DOMContentLoaded', function () {
     const voteForm = document.getElementById('voteForm');
     if (!voteForm) return; // nothing to do if form not present
 
+    // Candidate mapping per position (example names)
+    const candidates = {
+        'Pengerusi': ['Ali', 'Aminah', 'Farid'],
+        'Naib Pengerusi': ['Siti', 'Hassan'],
+        'Setiausaha': ['Lina', 'Zulkifli'],
+        'Bendahari': ['Hadi', 'Nurul']
+    };
+    const positionEl = document.getElementById('position');
+    const studentEl = document.getElementById('student');
+    function populateCandidates(pos) {
+        if (!studentEl) return;
+        studentEl.innerHTML = '<option value="">-- Pilih Calon --</option>';
+        if (!pos || !candidates[pos]) return;
+        candidates[pos].forEach(name => {
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.textContent = name;
+            studentEl.appendChild(opt);
+        });
+    }
+    if (positionEl) {
+        positionEl.addEventListener('change', function() {
+            populateCandidates(positionEl.value);
+        });
+    }
+
     const voteBtn = document.getElementById('voteSubmit');
     if (voteBtn) {
         voteBtn.addEventListener('click', function() {
@@ -36,6 +62,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     }, 5000);
                 }
                 form.reset();
+                // Refresh server-side voted positions so UI can disable appropriately
+                fetch('index.php?action=my_votes', { credentials: 'same-origin' })
+                    .then(r => r.json())
+                    .then(json => {
+                        try {
+                            // update global variable used by index.html
+                            window.serverVotedPositions = Array.isArray(json) ? json : [];
+                        } catch (e) {}
+                        try { if (typeof updateVoteControls === 'function') updateVoteControls(); } catch (e) {}
+                    })
+                    .catch(() => {});
             })
             .catch(() => {
                 const resEl = document.getElementById('result');

@@ -5,21 +5,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem-Pengundian</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Prevent browser requesting /favicon.ico and showing 404 in console -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E">
 </head>
 <body>
-    <h1>SISTEM PENGUNDIAN PEMILIHAN TOKOH MURID</h1>
-    <p>Membolehkan warga sekolah mengundi secara digital bagi memilih tokoh murid terbaik.</p>
-    <form id="voteForm" method="POST" action="index.php">
-        <label for="student">Pilih Tokoh Murid:</label>
-        <select name="student" id="student" required>
-            <option value="">-- Pilih --</option>
-            <option value="Ali">Ali</option>
-            <option value="Siti">Siti</option>
-            <option value="Ahmad">Ahmad</option>
-        </select>
-        <button type="submit">Undi</button>
-    </form>
-    <div id="result"></div>
+
+    <!-- Navbar -->
+    <nav id="navbar" style="width:100%;background:#2980b9;color:#fff;padding:16px 0;box-shadow:0 2px 8px rgba(44,62,80,0.08);">
+        <div style="max-width:900px;margin:auto;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:1.3rem;font-weight:600;letter-spacing:1px;">Sistem Pengundian</span>
+            <div>
+                <button id="homeNavBtn" onclick="showSection('home')">Home</button>
+                <button id="signupNavBtn" onclick="showSection('signup')">Sign Up</button>
+                <button id="signinNavBtn" onclick="showSection('signin')">Sign In</button>
+                <button id="logoutNavBtn" style="display:none;" onclick="logout()">Logout</button>
+                <button id="adminNavBtn" style="display:none;" onclick="showSection('admin')">Admin</button>
+            </div>
+        </div>
+    </nav>
+
+    
+
+    <!-- Sections -->
+    <div id="home-section">
+        <h1>Selamat Datang ke Sistem Pengundian Jawatankuasa Kelab Komputer</h1>
+        <p>Sila daftar, log masuk, dan undi jawatankuasa pilihan anda. Panel admin tersedia untuk pengurusan undian dan pengguna.</p>
+    </div>
+
+    <!-- Voting area (shown after login) -->
+    <div id="vote-section" style="display:none;">
+        <form id="voteForm" method="POST" action="#">
+            <label for="student">Pilih Jawatan untuk Diundi:</label>
+            <select name="student" id="student" required>
+                <option value="">-- Pilih Jawatan --</option>
+                <option value="Pengerusi">Pengerusi</option>
+                <option value="Naib Pengerusi">Naib Pengerusi</option>
+                <option value="Setiausaha">Setiausaha</option>
+                <option value="Bendahari">Bendahari</option>
+            </select>
+            <button id="voteSubmit" type="button">Undi</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <div id="vote-login-msg" style="display:none;color:#c0392b;font-weight:600;margin:24px;">Sila log masuk untuk mengundi.</div>
+
+    <div id="signup-section" style="display:none;">
+        <h2>Sign Up</h2>
+        <form id="signupForm">
+            <input type="hidden" name="action" value="signup">
+            <label for="signup_username">Username:</label>
+            <input type="text" id="signup_username" name="username" required>
+            <label for="signup_password">Password:</label>
+            <input type="password" id="signup_password" name="password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <div id="signup-result" style="margin-top:10px;color:#c0392b;font-weight:600;"></div>
+    </div>
+
+    <div id="signin-section" style="display:none;">
+        <h2>Sign In</h2>
+        <form id="signinForm">
+            <input type="hidden" name="action" value="signin">
+            <label for="signin_username">Username:</label>
+            <input type="text" id="signin_username" name="username" required>
+            <label for="signin_password">Password:</label>
+            <input type="password" id="signin_password" name="password" required>
+            <button type="submit">Sign In</button>
+        </form>
+        <div id="signin-result" style="margin-top:10px;color:#c0392b;font-weight:600;"></div>
+    </div>
+
+    <div id="admin-section" style="display:none;">
+        <h2>Admin Panel</h2>
+        <p>Welcome, Admin! Here you can manage users and view reports.</p>
+        <button onclick="viewUsers()">View All Users</button>
+        <button onclick="viewVotes()">View All Votes</button>
+        <div id="admin-output"></div>
+    </div>
+
+    <script>
+    // Section navigation
+    function showSection(section) {
+        document.getElementById('home-section').style.display = (section === 'home') ? 'block' : 'none';
+        document.getElementById('signup-section').style.display = (section === 'signup') ? 'block' : 'none';
+        document.getElementById('signin-section').style.display = (section === 'signin') ? 'block' : 'none';
+        document.getElementById('admin-section').style.display = (section === 'admin') ? 'block' : 'none';
+        // Only show vote-section when on home and logged in
+        if (section === 'home' && localStorage.getItem('isLoggedIn') === 'true') {
+            document.getElementById('vote-section').style.display = 'block';
+            document.getElementById('vote-login-msg').style.display = 'none';
+        } else if (section !== 'home') {
+            document.getElementById('vote-section').style.display = 'none';
+        }
+    }
+
+    // Show admin nav if user is admin (demo, real check is server-side)
+    function updateVoteVisibility() {
+        const isAdmin = localStorage.getItem('isAdmin') === 'true';
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        document.getElementById('adminNavBtn').style.display = isAdmin ? 'inline-block' : 'none';
+        document.getElementById('signupNavBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+        document.getElementById('signinNavBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+        document.getElementById('logoutNavBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+
+        if (isLoggedIn) {
+            // Show vote section only when on home
+            if (document.getElementById('home-section').style.display !== 'none') {
+                document.getElementById('vote-section').style.display = 'block';
+                document.getElementById('vote-login-msg').style.display = 'none';
+            } else {
+                document.getElementById('vote-section').style.display = 'none';
+            }
+        } else {
+            document.getElementById('vote-section').style.display = 'none';
+            document.getElementById('vote-login-msg').style.display = 'block';
+        }
+    }
+    updateVoteVisibility();
+
+    function logout() {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('isAdmin');
+        updateVoteVisibility();
+        showSection('home');
+    }
+
+    // Sign Up AJAX
+    const signupFormEl = document.getElementById('signupForm');
+    if (signupFormEl) {
+        signupFormEl.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            fetch('index.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                const out = document.getElementById('signup-result');
+                if (out) out.textContent = data;
+                if (data.includes('Pendaftaran berjaya')) {
+                    if (out) out.style.color = '#27ae60';
+                    form.reset();
+                } else {
+                    if (out) out.style.color = '#c0392b';
+                }
+            });
+        });
+    }
+
+    // Sign In AJAX
+    const signinFormEl = document.getElementById('signinForm');
+    if (signinFormEl) {
+        signinFormEl.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            fetch('index.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                const el = document.getElementById('signin-result');
+                if (el) el.textContent = data;
+                const lower = (data || '').toLowerCase();
+                // If server returns words like 'gagal', 'salah', or 'tidak', treat as failure
+                const isFailure = /gagal|salah|tidak/.test(lower);
+                const isSuccess = !isFailure && lower.includes('log masuk');
+                if (isSuccess) {
+                    if (el) el.style.color = '#27ae60';
+                    localStorage.setItem('isLoggedIn', 'true');
+                    if (lower.includes('admin')) {
+                        localStorage.setItem('isAdmin', 'true');
+                    }
+                    updateVoteVisibility();
+                    // Auto-direct to home after successful sign-in
+                    showSection('home');
+                    setTimeout(() => {
+                        if (el) el.textContent = '';
+                        form.reset();
+                    }, 1200);
+                } else {
+                    if (el) el.style.color = '#c0392b';
+                    // Keep sign-in section visible so error message stays
+                    showSection('signin');
+                }
+            });
+        });
+    }
+
+    // Admin AJAX functions
+    function viewUsers() {
+    fetch('index.php?action=view_users', { credentials: 'same-origin' })
+            .then(res => res.text())
+            .then(data => document.getElementById('admin-output').innerHTML = data);
+    }
+    function viewVotes() {
+    fetch('index.php?action=view_votes', { credentials: 'same-origin' })
+            .then(res => res.text())
+            .then(data => document.getElementById('admin-output').innerHTML = data);
+    }
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

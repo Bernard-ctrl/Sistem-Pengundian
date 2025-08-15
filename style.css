@@ -1,46 +1,137 @@
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f6fb;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
     margin: 0;
     padding: 0;
     text-align: center;
+    min-height: 100vh;
 }
+
+/* Fixed navbar at top */
+#navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+body {
+    padding-top: 72px; /* Adjust based on navbar height */
+}
+
 
 h1 {
     color: #2c3e50;
     margin-top: 40px;
+    font-size: 2.5rem;
+    letter-spacing: 1px;
 }
+
 
 form {
     margin: 30px auto;
-    padding: 20px;
+    padding: 24px 32px;
     background: #fff;
-    border-radius: 8px;
+    border-radius: 12px;
     display: inline-block;
-    box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+    box-shadow: 0 4px 16px rgba(44,62,80,0.10);
+    min-width: 280px;
+    max-width: 350px;
+    text-align: left;
 }
 
-label, select, button {
+
+label {
     font-size: 1rem;
-    margin: 10px 0;
+    margin: 10px 0 4px 0;
+    display: block;
+    color: #34495e;
+    font-weight: 500;
 }
+
+input[type="text"], input[type="password"], select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #dbeafe;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #f8fafc;
+    transition: border 0.2s;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, select:focus {
+    border-color: #2980b9;
+    outline: none;
+}
+
 
 button {
-    background: #2980b9;
+    background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
     color: #fff;
     border: none;
-    padding: 8px 18px;
-    border-radius: 4px;
+    padding: 10px 24px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background 0.2s;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 8px;
 }
 
 button:hover {
-    background: #1c5980;
+    background: linear-gradient(90deg, #1c5980 0%, #2980b9 100%);
+    transform: translateY(-2px) scale(1.04);
 }
+
 
 #result {
     margin-top: 20px;
     font-weight: bold;
     color: #27ae60;
+}
+
+/* Admin Section */
+#admin-section {
+    margin: 40px auto 0 auto;
+    padding: 24px 32px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(44,62,80,0.10);
+    max-width: 400px;
+    text-align: left;
+}
+
+#admin-section h2 {
+    color: #c0392b;
+    margin-bottom: 12px;
+}
+
+#admin-section button {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+#admin-output {
+    margin-top: 18px;
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.05);
+    font-size: 1rem;
+    color: #34495e;
+}
+
+@media (max-width: 600px) {
+    form, #admin-section {
+        min-width: 90vw;
+        max-width: 98vw;
+        padding: 16px 8px;
+    }
+    h1 {
+        font-size: 2rem;
+    }
 }

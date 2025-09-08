@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Carta Alir - Sistem Pengundian</title>
+  <!-- Inline favicon to prevent 404 in console -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Crect width='16' height='16' fill='%23007ACC'/%3E%3C/svg%3E">
+  <style>body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:1rem;background:#fff;color:#111}</style>
+  <!-- Mermaid CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</head>
+<body>
+  <h1>Carta Alir (Flowchart) — Sistem Pengundian</h1>
+  <div class="mermaid">
+flowchart TD
+  Start([Mula])
+  Menu[Papar Menu Utama]
+  End([Selesai])
+  Start --> Menu
+
+    Menu --> Role{Adakah anda pentadbir?}
+    Role -->|Ya| AdminLogin[Admin: Masukkan ID Pengguna dan Kata Laluan]
+    AdminLogin --> AdminAuth{Sahkan kelayakan}
+  AdminAuth -->|Ya| AdminDash[Paparan Papan Pemuka Admin - Urus Calon dan Lihat Keputusan]
+    AdminAuth -->|Tidak| AdminFail[Paparkan ralat dan kembali ke Login]
+    AdminFail --> AdminLogin
+    AdminDash --> End
+
+    Role -->|Tidak| NewUser{Pengguna baharu?}
+    NewUser -->|Ya| Register[Daftar: ID Pengguna, Kata Laluan]
+    Register --> RegCheck{Maklumat lengkap?}
+    RegCheck -->|Ya| RegVerify[Pengesahan ID dan Aktifkan Akaun]
+    RegCheck -->|Tidak| RegFail[Paparkan ralat dan kembali ke borang daftar]
+  RegVerify --> UserLogin[Login: ID dan Kata Laluan]
+
+    NewUser -->|Tidak| UserLogin
+
+    UserLogin --> LoginAuth{Sah dan Akaun Aktif?}
+    LoginAuth -->|Tidak| LoginFail[Paparkan ralat dan kembali ke Login]
+    LoginAuth -->|Ya| CheckVoted{Telah mengundi?}
+    CheckVoted -->|Ya| Already[Paparkan: Anda telah mengundi] --> End
+    CheckVoted -->|Tidak| ShowCandidates[Paparkan Calon dan Borang Undi]
+    ShowCandidates --> SubmitVote[Hantar Undi]
+    SubmitVote -->|Berjaya| VoteConfirm[Terima Pengesahan Undi] --> End
+    SubmitVote -->|Gagal| VoteFail[Paparkan ralat dan cuba semula]
+
+    %% Ralat log masuk / penghantaran
+    AdminAuth -->|Kesilapan teknikal| AdminFail
+    LoginAuth -->|Kesilapan teknikal| LoginFail
+
+    style Start fill:#f9f,stroke:#333,stroke-width:2px
+    style End fill:#bbf,stroke:#333,stroke-width:2px
+  </div>
+
+  <p>Jika diagram tidak muncul, muat semula atau buka fail ini dalam pelayar yang menyokong sambungan ke CDN.</p>
+  <p>Tukar label/urutan dengan mengedit <code>carta-alir.md</code> atau <code>carta-alir.html</code>.</p>
+</body>
+</html>

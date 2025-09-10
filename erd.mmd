@@ -1,0 +1,102 @@
+# ERD (Mermaid) untuk Sistem Pengundian
+
+```mermaid
+flowchart LR
+    %% Entities as rectangles, attributes as ovals, relationships as diamonds
+
+    subgraph E1[PENGGUNA]
+        direction TB
+        PU["PENGGUNA"]:::entity
+    end
+    u1((ID_Pengguna))
+    u2((Username))
+    u3((Kata_Laluan_Hash))
+    u4((Is_Admin))
+    u5((Tarikh_Dicipta))
+    u1 --- PU
+    u2 --- PU
+    u3 --- PU
+    u4 --- PU
+    u5 --- PU
+
+    subgraph E2[JAWATAN]
+        direction TB
+        PJ["JAWATAN"]:::entity
+    end
+    j1((ID_Jawatan))
+    j2((Nama_Jawatan))
+    j3((Keterangan))
+    j1 --- PJ
+    j2 --- PJ
+    j3 --- PJ
+
+    subgraph E3[CALON]
+        direction TB
+        PC["CALON"]:::entity
+    end
+    c1((ID_Calon))
+    c2(("ID_Jawatan (FK)"))
+    c3((Nama_Calon))
+    c4((Bio))
+    c1 --- PC
+    c2 --- PC
+    c3 --- PC
+    c4 --- PC
+
+    subgraph E4[SESI_UNDI]
+        direction TB
+        PS["SESI_UNDI"]:::entity
+    end
+    s1((ID_Sesi))
+    s2((Nama_Sesi))
+    s3((Tarikh_Mula))
+    s4((Tarikh_Tamat))
+    s5((Is_Active))
+    s1 --- PS
+    s2 --- PS
+    s3 --- PS
+    s4 --- PS
+    s5 --- PS
+
+    subgraph E5[UNDI]
+        direction TB
+        PV["UNDI"]:::entity
+    end
+    v1((ID_Undi))
+    v2(("ID_Pengguna (FK)"))
+    v3(("ID_Jawatan (FK)"))
+    v4(("ID_Calon (FK)"))
+    v5((Tarikh))
+    v1 --- PV
+    v2 --- PV
+    v3 --- PV
+    v4 --- PV
+    v5 --- PV
+
+    %% Relationships as diamonds
+    R1{"mempunyai"}
+    R2{"mengundi"}
+    R3{"menerima"}
+    R4{"mengandungi"}
+
+    PJ --- R1 --- PC
+    PU --- R2 --- PV
+    PC --- R3 --- PV
+    PJ --- PV
+    PS --- R4 --- PJ
+
+    classDef entity fill:#ffffff,stroke:#000,stroke-width:1px
+```
+
+Nota / Kekangan
+- Pastikan UNIQUE(ID_Pengguna, ID_Jawatan) pada jadual `UNDI` untuk mengelakkan undi berganda bagi setiap jawatan.
+- Simpan kata laluan hanya sebagai hash yang kuat (contoh: bcrypt/argon2) dalam `Kata_Laluan_Hash`.
+- Lakukan pengesahan undi di pelayan — jangan bergantung hanya pada pemeriksaan klien.
+- Gunakan transaksi pangkalan data apabila memasukkan rekod undi untuk elakkan perlumbaan.
+
+Cara melihat
+- Buka fail ini dalam perisian yang menyokong Mermaid (VS Code Mermaid Preview, GitLab, GitHub) untuk merender rajah.
+
+Saya boleh juga:
+- menjana PNG rajah dan commit ke repo, atau
+- menghasilkan `schema.sql` (DDL) berdasarkan model ini.

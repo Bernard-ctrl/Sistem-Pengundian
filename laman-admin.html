@@ -14,7 +14,9 @@
     .legend .output { border-style:solid; }
     .canvas { max-width:1200px; margin:0 auto; border:3px solid #000; padding:12px; display:flex; flex-direction:column; gap:12px; }
     .box { border:2px solid #000; padding:8px; background:#fff; position:relative; }
-    .box.input { border-style:dashed; }
+    .box.input { border-style:solid; }
+    .box.output { border-style:solid; }
+    .box { border-style:solid; }
     .callout { position:absolute; top:4px; right:4px; background:#000; color:#fff; font-size:10px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:2px; }
     .label { font-size:11px; font-weight:bold; text-transform:uppercase; margin-bottom:4px; }
     .note { font-size:11px; font-style:italic; }
@@ -27,8 +29,7 @@
   <p>Struktur minimum modul pengurusan. Putus-putus = Input, Penuh = Output.</p>
   <div class="legend">
     <strong>Legenda:</strong>
-    <span class="input">Input</span>
-    <span class="output">Output</span>
+    <!-- Input/Output legend removed -->
   </div>
   <div class="canvas">
     <div class="box output" style="min-height:50px;">

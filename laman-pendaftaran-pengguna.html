@@ -13,8 +13,8 @@
     .legend .input { border-style:dashed; }
     .legend .output { border-style:solid; }
     .canvas { max-width:900px; margin:0 auto; border:3px solid #000; padding:12px; }
-    .box { border:2px solid #000; padding:8px; margin-bottom:12px; background:#fff; position:relative; }
-    .box.input { border-style:dashed; }
+    .box { border-style:solid; }
+    .box.input { border-style:solid; }
     .label { font-size:11px; font-weight:bold; text-transform:uppercase; margin-bottom:4px; }
     .note { font-size:11px; font-style:italic; }
     .callout { position:absolute; top:4px; right:4px; background:#000; color:#fff; font-size:10px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:2px; }
@@ -29,8 +29,7 @@
   <p>Versi dipermudahkan: hanya blok utama. Putus-putus = <strong>Input</strong>, Penuh = <strong>Output</strong>.</p>
   <div class="legend">
     <strong>Legenda:</strong>
-    <span class="input">Input</span>
-    <span class="output">Output</span>
+    <!-- Input/Output legend removed -->
   </div>
   <div class="canvas">
     <div class="box output" style="min-height:50px;">

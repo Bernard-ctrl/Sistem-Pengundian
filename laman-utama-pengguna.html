@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wireframe: Laman Utama Pengguna</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing:border-box; }
+    body { font-family:Arial, sans-serif; margin:0; padding:16px; background:#fff; color:#000; }
+    h1 { margin:0 0 12px; font-size:20px; }
+    p { font-size:13px; }
+    .legend span { display:inline-block; padding:4px 8px; margin:4px 8px 4px 0; border:2px solid #000; font-size:11px; }
+    .legend .input { border-style:dashed; }
+    .legend .output { border-style:solid; }
+    .canvas { max-width:1300px; margin:0 auto; border:3px solid #000; padding:12px; }
+    .box { border:2px solid #000; padding:8px; background:#fff; position:relative; }
+    .box.input { border-style:dashed; }
+    .callout { position:absolute; top:4px; right:4px; background:#000; color:#fff; font-size:10px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:2px; }
+    .label { font-size:11px; font-weight:bold; text-transform:uppercase; margin-bottom:4px; }
+    .note { font-size:11px; font-style:italic; }
+    .row { display:flex; gap:12px; }
+    .col { flex:1; display:flex; flex-direction:column; gap:12px; }
+    .sidebar { flex:0 0 250px; }
+    .stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
+    .panels { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .wide { grid-column:1 / -1; }
+    .spacer { height:12px; }
+    ol { font-size:12px; line-height:1.5; }
+    @media (max-width:900px){ .row { flex-direction:column; } .sidebar { flex:1; } .panels { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <h1>Wireframe Ringkas: Utama Pengguna</h1>
+  <p>Versi minimum blok sahaja. Putus-putus = Input, Penuh = Output.</p>
+  <div class="legend">
+    <strong>Legenda:</strong>
+    <span class="input">Input</span>
+    <span class="output">Output</span>
+  </div>
+  <div class="canvas" style="display:flex; flex-direction:column; gap:12px;">
+    <div class="box output" style="min-height:50px;">
+      <div class="callout">1</div>
+      <div class="label">HEADER</div>
+      <div class="note">Nama Sistem / Log Keluar</div>
+    </div>
+    <div class="box output" style="min-height:40px;">
+      <div class="callout">2</div>
+      <div class="label">NAV RINGKAS</div>
+      <div class="note">Utama | Calon | Undi | Keputusan</div>
+    </div>
+    <div class="row">
+      <div class="col" style="flex:0 0 260px;">
+        <div class="box output" style="min-height:100px;">
+          <div class="callout">3</div>
+          <div class="label">PROFIL</div>
+        </div>
+        <div class="box output" style="min-height:90px;">
+          <div class="callout">4</div>
+          <div class="label">STATUS UNDI</div>
+        </div>
+        <div class="box input" style="min-height:70px;">
+          <div class="callout">5</div>
+          <div class="label">BUTANG UNDI</div>
+        </div>
+      </div>
+      <div class="col" style="flex:1;">
+        <div class="box output" style="min-height:100px;">
+          <div class="callout">6</div>
+          <div class="label">PENGUMUMAN</div>
+        </div>
+        <div class="box output" style="min-height:120px;">
+          <div class="callout">7</div>
+          <div class="label">STAT RINGKAS</div>
+          <div class="note">Calon | Pengundi | Undi</div>
+        </div>
+        <div class="box output" style="min-height:120px;">
+          <div class="callout">8</div>
+          <div class="label">KEPUTUSAN SEMENTARA</div>
+        </div>
+        <div class="box input" style="min-height:70px;">
+          <div class="callout">9</div>
+          <div class="label">PAUTAN CEPAT</div>
+        </div>
+      </div>
+    </div>
+    <div class="box output" style="min-height:40px;">
+      <div class="callout">10</div>
+      <div class="label">FOOTER</div>
+    </div>
+  </div>
+  <h2>Ringkasan Elemen</h2>
+  <ol>
+    <li>Header (Output)</li>
+    <li>Navigasi Ringkas (Output)</li>
+    <li>Profil (Output)</li>
+    <li>Status Undi (Output)</li>
+    <li>Butang Undi (Input)</li>
+    <li>Pengumuman (Output)</li>
+    <li>Stat Ringkas (Output)</li>
+    <li>Keputusan Sementara (Output)</li>
+    <li>Pautan Cepat (Input)</li>
+    <li>Footer (Output)</li>
+  </ol>
+</body>
+</html>

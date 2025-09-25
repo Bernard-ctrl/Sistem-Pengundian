@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wireframe: Laman Log Masuk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing:border-box; }
+    body { font-family:Arial, sans-serif; margin:0; padding:16px; background:#fff; color:#000; }
+    h1 { margin:0 0 12px; font-size:20px; }
+    p { font-size:13px; }
+    .legend span { display:inline-block; padding:4px 8px; margin:4px 8px 4px 0; border:2px solid #000; font-size:11px; }
+    .legend .input { border-style:dashed; }
+    .legend .output { border-style:solid; }
+    .canvas { max-width:760px; margin:0 auto; border:3px solid #000; padding:12px; }
+    .box { border:2px solid #000; padding:8px; margin-bottom:12px; background:#fff; position:relative; }
+    .box.input { border-style:dashed; }
+    .callout { position:absolute; top:4px; right:4px; background:#000; color:#fff; font-size:10px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:2px; }
+    .label { font-size:11px; font-weight:bold; text-transform:uppercase; margin-bottom:4px; }
+    .note { font-size:11px; font-style:italic; }
+    .center-block { max-width:420px; margin:0 auto; }
+    ol { font-size:12px; line-height:1.5; }
+  </style>
+</head>
+<body>
+  <h1>Wireframe Ringkas: Log Masuk</h1>
+  <p>Versi dipermudahkan (blok asas). Putus-putus = Input, Penuh = Output.</p>
+  <div class="legend">
+    <strong>Legenda:</strong>
+    <span class="input">Input</span>
+    <span class="output">Output</span>
+  </div>
+  <div class="canvas">
+    <div class="box output" style="min-height:50px;">
+      <div class="callout">1</div>
+      <div class="label">HEADER</div>
+      <div class="note">Nama Sistem</div>
+    </div>
+    <div class="center-block">
+      <div class="box input" style="min-height:160px;">
+        <div class="callout">2</div>
+        <div class="label">BORANG LOG MASUK</div>
+        <div class="box input" style="min-height:50px; margin:8px 0 8px;">
+          <div class="callout">2a</div>
+          <div class="label">ID / Emel</div>
+        </div>
+        <div class="box input" style="min-height:50px; margin:0 0 8px;">
+          <div class="callout">2b</div>
+          <div class="label">Kata Laluan</div>
+        </div>
+        <div class="box input" style="min-height:40px; margin:0;">
+          <div class="callout">2c</div>
+          <div class="label">Butang Log Masuk</div>
+        </div>
+      </div>
+      <div class="box output" style="min-height:50px;">
+        <div class="callout">3</div>
+        <div class="label">MAKLUM BALAS</div>
+      </div>
+      <div class="box output" style="min-height:40px;">
+        <div class="callout">4</div>
+        <div class="label">PAUTAN LUPA KATA LALUAN</div>
+      </div>
+      <div class="box output" style="min-height:40px;">
+        <div class="callout">5</div>
+        <div class="label">PAUTAN DAFTAR AKAUN</div>
+      </div>
+    </div>
+    <div class="box output" style="min-height:40px;">
+      <div class="callout">6</div>
+      <div class="label">FOOTER</div>
+    </div>
+  </div>
+  <h2>Ringkasan Elemen</h2>
+  <ol>
+    <li>Header (Output)</li>
+    <li>Borang Log Masuk (Input) – 2a ID/Emel, 2b Kata Laluan, 2c Butang</li>
+    <li>Maklum Balas (Output)</li>
+    <li>Pautan Lupa Kata Laluan (Output)</li>
+    <li>Pautan Daftar Akaun (Output)</li>
+    <li>Footer (Output)</li>
+  </ol>
+</body>
+</html>

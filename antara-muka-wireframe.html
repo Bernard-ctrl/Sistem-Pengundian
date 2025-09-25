@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dokumentasi Antara Muka (Input / Output) - Wireframe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Gaya asas hitam & putih sahaja */
+    * { box-sizing: border-box; }
+    body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 16px; background:#fff; color:#000; }
+    h1, h2, h3 { margin: 4px 0 12px; font-weight: 600; }
+    p, li { font-size: 14px; line-height: 1.4; }
+    .legend { margin-bottom: 24px; }
+    .legend span { display:inline-block; padding:4px 8px; margin:4px 8px 4px 0; border:2px solid #000; font-size:12px; }
+    .legend .input { border-style: dashed; }
+    .legend .output { border-style: solid; }
+    .canvas { width:100%; max-width:1200px; margin:0 auto; border:3px solid #000; padding:12px; }
+    .row { display:flex; gap:12px; margin-bottom:12px; }
+    .col { flex:1; }
+    .box { border:2px solid #000; padding:8px; min-height:42px; position:relative; background:#fff; }
+    .box.input { border-style: dashed; }
+    .box.output { border-style: solid; }
+    .box .label { font-size:12px; font-weight:bold; letter-spacing:.5px; margin-bottom:4px; text-transform:uppercase; }
+    .stack { display:flex; flex-direction:column; gap:12px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+    .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .note { font-size:11px; margin-top:4px; font-style:italic; }
+    hr { border:none; border-top:2px solid #000; margin:32px 0 24px; }
+    .section-title { margin:0 0 4px; font-size:16px; }
+    /* Nombor rujukan titik tumpu (callouts) */
+    .callout { position:absolute; top:4px; right:4px; background:#000; color:#fff; font-size:10px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:2px; }
+    /* Pastikan wireframe kekal mudah dicetak */
+    @media print { body { padding:0; } .canvas { border-width:2px; } }
+  </style>
+</head>
+<body>
+  <h1>Ringkasan Antara Muka (Versi Sangat Ringkas)</h1>
+  <p>Versi dipermudahkan: hanya blok asas untuk menunjukkan struktur global sistem pengundian. Putus-putus = <strong>Input</strong>, Penuh = <strong>Output</strong>.</p>
+
+  <div class="legend">
+    <strong>Legenda:</strong>
+    <span class="input">Input</span>
+    <span class="output">Output</span>
+  </div>
+
+  <div class="canvas" style="display:flex; flex-direction:column; gap:12px;">
+    <div class="box output" style="min-height:60px;">
+      <div class="callout">1</div>
+      <div class="label">HEADER</div>
+      <div class="note">Nama sistem / Logo</div>
+    </div>
+    <div class="box output" style="min-height:40px;">
+      <div class="callout">2</div>
+      <div class="label">MENU RINGKAS</div>
+      <div class="note">Utama | Calon | Undi | Keputusan | Log Masuk</div>
+    </div>
+    <div class="box input" style="min-height:70px;">
+      <div class="callout">3</div>
+      <div class="label">BORANG LOG MASUK</div>
+      <div class="note">ID / Kata Laluan</div>
+    </div>
+    <div class="box input" style="min-height:90px;">
+      <div class="callout">4</div>
+      <div class="label">BORANG PENDAFTARAN</div>
+      <div class="note">Medan asas pengguna baharu</div>
+    </div>
+    <div class="box output" style="min-height:80px;">
+      <div class="callout">5</div>
+      <div class="label">SENARAI CALON</div>
+      <div class="note">Nama calon ringkas</div>
+    </div>
+    <div class="box input" style="min-height:70px;">
+      <div class="callout">6</div>
+      <div class="label">BORANG UNDI</div>
+      <div class="note">Pilih 1 calon & Hantar</div>
+    </div>
+    <div class="box output" style="min-height:80px;">
+      <div class="callout">7</div>
+      <div class="label">KEPUTUSAN / STATISTIK</div>
+      <div class="note">Jumlah undi & ranking ringkas</div>
+    </div>
+    <div class="box output" style="min-height:50px;">
+      <div class="callout">8</div>
+      <div class="label">FOOTER</div>
+      <div class="note">Hak cipta</div>
+    </div>
+  </div>
+
+  <h2>Ringkasan Elemen</h2>
+  <ol style="font-size:13px; line-height:1.5;">
+    <li>Header (Output)</li>
+    <li>Menu Ringkas (Output)</li>
+    <li>Borang Log Masuk (Input)</li>
+    <li>Borang Pendaftaran (Input)</li>
+    <li>Senarai Calon (Output)</li>
+    <li>Borang Undi (Input)</li>
+    <li>Keputusan / Statistik (Output)</li>
+    <li>Footer (Output)</li>
+  </ol>
+
+  <p style="font-size:12px;">Nota: Ini hanya lakaran kasar. Perincian setiap halaman diterangkan dalam fail wireframe individu.</p>
+
+</body>
+</html>

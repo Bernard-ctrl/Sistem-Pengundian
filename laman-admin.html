@@ -69,7 +69,7 @@
               <input name="nama" required placeholder="Contoh: Siti Aminah" />
             </label>
             <label>ID
-              <input name="id" required placeholder="A21EC0100" />
+              <input name="id" required placeholder="Contoh: D6260" pattern="D[0-9]{4}" title="Format: D diikuti 4 digit (cth: D6260)" />
             </label>
             <label>Peranan
               <select name="peranan" required>
@@ -118,23 +118,23 @@
         </section>
         <section class="card" id="export" aria-labelledby="exportTitle">
           <h2 id="exportTitle" style="margin:0 0 8px; font-size:16px;">Eksport Data</h2>
-          <button onclick="alert('Eksport contoh sahaja');">Muat Turun (CSV)</button>
+          <button onclick="alert('Eksport demo');">Muat Turun (CSV)</button>
         </section>
       </aside>
       <main class="main">
         <section class="card" aria-labelledby="senaraiPenggunaTitle">
-          <h2 id="senaraiPenggunaTitle" style="margin:0 0 8px; font-size:16px;">Senarai Pengguna (Contoh)</h2>
+          <h2 id="senaraiPenggunaTitle" style="margin:0 0 8px; font-size:16px;">Senarai Pengguna</h2>
           <table>
             <thead><tr><th>ID</th><th>Nama</th><th>Peranan</th><th>Status</th></tr></thead>
             <tbody id="tblUsers">
-              <tr><td>A21EC0001</td><td>Ali Rahman</td><td>Pelajar</td><td>Aktif</td></tr>
-              <tr><td>STF102</td><td>Nora Ibrahim</td><td>Staf</td><td>Aktif</td></tr>
-              <tr><td>admin01</td><td>Admin Sistem</td><td>Admin</td><td>Aktif</td></tr>
+              <tr><td>D6260</td><td>Ali Rahman</td><td>Pelajar</td><td>Aktif</td></tr>
+              <tr><td>D7001</td><td>Nora Ibrahim</td><td>Staf</td><td>Aktif</td></tr>
+              <tr><td>D0001</td><td>Admin Sistem</td><td>Admin</td><td>Aktif</td></tr>
             </tbody>
           </table>
         </section>
         <section class="card" aria-labelledby="senaraiCalonTitle">
-          <h2 id="senaraiCalonTitle" style="margin:0 0 8px; font-size:16px;">Senarai Calon (Contoh)</h2>
+          <h2 id="senaraiCalonTitle" style="margin:0 0 8px; font-size:16px;">Senarai Calon</h2>
           <table>
             <thead><tr><th>Nama</th><th>Jawatan</th><th>Fakulti</th><th>Undi</th></tr></thead>
             <tbody id="tblCandidates">
@@ -145,7 +145,7 @@
           </table>
         </section>
         <section class="card" aria-labelledby="keputusanTitle" id="keputusan">
-          <h2 id="keputusanTitle" style="margin:0 0 8px; font-size:16px;">Keputusan Ringkas (Contoh)</h2>
+          <h2 id="keputusanTitle" style="margin:0 0 8px; font-size:16px;">Keputusan Ringkas</h2>
           <table>
             <thead><tr><th>Jawatan</th><th>Calon Mendahului</th><th>Undi</th></tr></thead>
             <tbody>
@@ -156,20 +156,20 @@
           </table>
         </section>
         <section class="card" aria-labelledby="logTitle" id="log">
-          <h2 id="logTitle" style="margin:0 0 8px; font-size:16px;">Log Aktiviti (Contoh)</h2>
+          <h2 id="logTitle" style="margin:0 0 8px; font-size:16px;">Log Aktiviti</h2>
           <ul class="log-list" id="logList">
             <li>[10:01] Undian dibuka</li>
-            <li>[10:05] Pengguna A21EC0001 mendaftar</li>
+            <li>[10:05] Pengguna D6260 mendaftar</li>
             <li>[10:20] Calon baharu ditambah: Inderjeet Singh</li>
             <li>[11:00] 50 undi direkod</li>
           </ul>
         </section>
       </main>
     </div>
-    <footer>&copy; 2025 Sistem Pengundian (Prototip Monokrom)</footer>
+    
   </div>
   <script>
-    // Tambah pengguna (contoh sahaja, hanya manipulasi DOM)
+  // Tambah pengguna (contoh sahaja, hanya manipulasi DOM)
     const formUser = document.getElementById('formAddUser');
     const tblUsers = document.getElementById('tblUsers');
     const msgUser = document.getElementById('msgUser');
@@ -192,7 +192,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `<td>${data.id}</td><td>${data.nama}</td><td>${data.peranan.charAt(0).toUpperCase()+data.peranan.slice(1)}</td><td>Aktif</td>`;
       tblUsers.appendChild(tr);
-      msgUser.textContent = 'Pengguna ditambah (contoh).';
+  msgUser.textContent = 'Pengguna ditambah.';
       addLog('Pengguna baharu: '+data.id);
       formUser.reset();
     });
@@ -202,7 +202,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `<td>${data.nama}</td><td>${data.jawatan}</td><td>${data.fakulti}</td><td>0</td>`;
       tblCandidates.appendChild(tr);
-      msgCandidate.textContent = 'Calon ditambah (contoh).';
+  msgCandidate.textContent = 'Calon ditambah.';
       addLog('Calon baharu: '+data.nama);
       formCandidate.reset();
     });

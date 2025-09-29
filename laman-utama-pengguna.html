@@ -2,81 +2,127 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8" />
-  <title>Wireframe: Laman Utama Pengguna</title>
+  <title>Laman Utama Pengguna</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="wireframe.css" />
   <style>
-    * { box-sizing:border-box; }
     body { font-family:Arial, sans-serif; margin:0; padding:16px; background:#fff; color:#000; }
-    h1 { margin:0 0 12px; font-size:20px; }
-    p { font-size:13px; }
-    .legend span { display:inline-block; padding:4px 8px; margin:4px 8px 4px 0; border:2px solid #000; font-size:11px; }
-    .legend .input { border-style:dashed; }
-    .legend .output { border-style:solid; }
-    .canvas { max-width:1300px; margin:0 auto; border:3px solid #000; padding:12px; }
-    .box { border:2px solid #000; padding:8px; background:#fff; position:relative; border-style:solid; }
-    /* .box.input { border-style:dashed; } */
-    .callout { position:absolute; top:4px; right:4px; background:#000; color:#fff; font-size:10px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:2px; }
-    .label { font-size:11px; font-weight:bold; text-transform:uppercase; margin-bottom:4px; }
-    .note { font-size:11px; font-style:italic; }
-    .row { display:flex; gap:12px; }
-    .col { flex:1; display:flex; flex-direction:column; gap:12px; }
-    .sidebar { flex:0 0 250px; }
-    .stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
-    .panels { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-    .wide { grid-column:1 / -1; }
-    .spacer { height:12px; }
-    ol { font-size:12px; line-height:1.5; }
-    @media (max-width:900px){ .row { flex-direction:column; } .sidebar { flex:1; } .panels { grid-template-columns:1fr; } }
+    .wrapper { max-width:1300px; margin:0 auto; border:3px solid #000; padding:16px; }
+    header h1 { margin:0 0 4px; font-size:22px; }
+    nav ul { list-style:none; padding:0; margin:0; display:flex; gap:12px; flex-wrap:wrap; }
+    nav a { text-decoration:none; color:#000; padding:4px 8px; border:2px solid #000; display:inline-block; font-size:13px; }
+    nav a:hover { background:#000; color:#fff; }
+    .layout { display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; }
+    .side { flex:0 0 260px; display:flex; flex-direction:column; gap:16px; }
+    .main { flex:1; display:flex; flex-direction:column; gap:16px; }
+    .card { border:2px solid #000; padding:12px; background:#fff; }
+    .profile-table { width:100%; border-collapse:collapse; font-size:12px; }
+    .profile-table th, .profile-table td { border:2px solid #000; padding:4px 6px; text-align:left; }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+    .stat-box { border:2px solid #000; padding:10px; text-align:center; }
+    .stat-box h3 { margin:0; font-size:14px; }
+    .stat-box .num { font-size:26px; font-weight:bold; margin-top:4px; }
+    .results-table { width:100%; border-collapse:collapse; font-size:12px; }
+    .results-table th, .results-table td { border:2px solid #000; padding:4px 6px; }
+    .quick-links a { display:block; padding:6px 8px; border:2px solid #000; text-decoration:none; color:#000; margin-bottom:8px; font-size:13px; }
+    .quick-links a:hover { background:#000; color:#fff; }
+    .vote-btn { width:100%; padding:12px; border:3px solid #000; font-size:16px; background:#fff; cursor:pointer; }
+    .vote-btn:hover { background:#000; color:#fff; }
+    .muted { color:#666; font-size:12px; }
+    footer { margin-top:24px; font-size:12px; }
   </style>
 </head>
 <body>
-  <h1>Wireframe Ringkas: Utama Pengguna</h1>
-  <p>Versi minimum blok sahaja. Putus-putus = Input, Penuh = Output.</p>
-  <div class="legend">
-    <strong>Legenda:</strong>
-    <!-- Input/Output legend removed -->
+  <div class="wrapper">
+    <header>
+      <h1>Sistem Pengundian : Utama Pengguna</h1>
+      <p class="muted">Selamat datang kembali, pengguna berdaftar.</p>
+    </header>
+    <nav aria-label="Navigasi utama">
+      <ul>
+        <li><a href="laman-utama-pengguna.html">Utama</a></li>
+        <li><a href="laman-pilihan-calon.html">Calon</a></li>
+        <li><a href="laman-pilihan-calon.html#undi">Undi</a></li>
+        <li><a href="#keputusan">Keputusan</a></li>
+        <li><a href="laman-log-masuk.html">Log Keluar</a></li>
+      </ul>
+    </nav>
+    <div class="layout">
+      <aside class="side">
+        <section class="card" aria-labelledby="profilTitle">
+          <h2 id="profilTitle" style="margin-top:0; font-size:16px;">Profil</h2>
+          <table class="profile-table">
+            <tbody>
+              <tr><th>Nama</th><td>Ali Rahman</td></tr>
+              <tr><th>ID</th><td>A21EC0001</td></tr>
+              <tr><th>Emel</th><td>ali.rahman@contoh.edu</td></tr>
+              <tr><th>Status</th><td>Aktif</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <section class="card" aria-labelledby="statusUndiTitle">
+          <h2 id="statusUndiTitle" style="margin-top:0; font-size:16px;">Status Undian</h2>
+          <p style="margin:0 0 8px;">Belum Mengundi</p>
+          <progress value="0" max="1" style="width:100%; height:18px;"></progress>
+          <p class="muted" style="margin-top:8px;">Sila buat pilihan sebelum tarikh tutup.</p>
+        </section>
+        <section>
+          <button class="vote-btn" onclick="window.location='laman-pilihan-calon.html'">Pergi Mengundi</button>
+        </section>
+      </aside>
+      <main class="main">
+        <section class="card" aria-labelledby="pengumumanTitle">
+          <h2 id="pengumumanTitle" style="margin-top:0; font-size:16px;">Pengumuman</h2>
+          <ul style="margin:0 0 4px 18px; font-size:13px; line-height:1.4;">
+            <li>Pembukaan undian: 10 Mac 2025 (8:00 pagi)</li>
+            <li>Penutupan undian: 12 Mac 2025 (5:00 petang)</li>
+            <li>Sesi soal jawab calon akan diadakan secara dalam talian.</li>
+          </ul>
+        </section>
+        <section class="card" aria-labelledby="statRingkasTitle">
+          <h2 id="statRingkasTitle" style="margin-top:0; font-size:16px;">Statistik Ringkas</h2>
+          <div class="stats-grid">
+            <div class="stat-box"><h3>Calon</h3><div class="num" id="statCalon">6</div></div>
+            <div class="stat-box"><h3>Pengundi Berdaftar</h3><div class="num" id="statPengundi">245</div></div>
+            <div class="stat-box"><h3>Undi Direkod</h3><div class="num" id="statUndi">180</div></div>
+            <div class="stat-box"><h3>Peratus Penyertaan</h3><div class="num" id="statPeratus">73%</div></div>
+          </div>
+        </section>
+        <section class="card" aria-labelledby="keputusanSementaraTitle" id="keputusan">
+          <h2 id="keputusanSementaraTitle" style="margin-top:0; font-size:16px;">Keputusan Sementara (Contoh)</h2>
+          <table class="results-table">
+            <thead>
+              <tr><th>Calon</th><th>Jawatan</th><th>Undi</th><th>Peratus</th></tr>
+            </thead>
+            <tbody id="tbodyKeputusan">
+              <tr><td>Nur Aisyah</td><td>Pengerusi</td><td>52</td><td>29%</td></tr>
+              <tr><td>Faiz Kamal</td><td>Pengerusi</td><td>48</td><td>27%</td></tr>
+              <tr><td>Lim Wei Jun</td><td>Setiausaha</td><td>40</td><td>22%</td></tr>
+              <tr><td>Inderjeet Singh</td><td>Bendahari</td><td>25</td><td>14%</td></tr>
+              <tr><td>Halimah Zakaria</td><td>AJK</td><td>15</td><td>8%</td></tr>
+            </tbody>
+          </table>
+          <p class="muted" style="margin-top:8px;">Data ini hanya contoh statik. Bukan keputusan sebenar.</p>
+        </section>
+        <section class="card" aria-labelledby="pautanCepatTitle">
+          <h2 id="pautanCepatTitle" style="margin-top:0; font-size:16px;">Pautan Cepat</h2>
+          <div class="quick-links">
+            <a href="laman-pilihan-calon.html">Lihat Senarai Calon</a>
+            <a href="laman-pilihan-calon.html#undi">Terus Mengundi</a>
+            <a href="#keputusan">Keputusan Sementara</a>
+            <a href="laman-log-masuk.html">Log Keluar</a>
+          </div>
+        </section>
+      </main>
+    </div>
+    <footer>&copy; 2025 Sistem Pengundian (Prototip Monokrom)</footer>
   </div>
-  <div class="canvas" style="display:flex; flex-direction:column; gap:12px;">
-    <div class="box output" style="min-height:50px;">
-      <div class="label">HEADER</div>
-      <div class="note">Nama Sistem / Log Keluar</div>
-    </div>
-    <div class="box output" style="min-height:40px;">
-      <div class="label">NAV RINGKAS</div>
-      <div class="note">Utama | Calon | Undi | Keputusan</div>
-    </div>
-    <div class="row">
-      <div class="col" style="flex:0 0 260px;">
-        <div class="box output" style="min-height:100px;">
-          <div class="label">PROFIL</div>
-        </div>
-        <div class="box output" style="min-height:90px;">
-          <div class="label">STATUS UNDI</div>
-        </div>
-        <div class="box input" style="min-height:70px;">
-          <div class="label">BUTANG UNDI</div>
-        </div>
-      </div>
-      <div class="col" style="flex:1;">
-        <div class="box output" style="min-height:100px;">
-          <div class="label">PENGUMUMAN</div>
-        </div>
-        <div class="box output" style="min-height:120px;">
-          <div class="label">STAT RINGKAS</div>
-          <div class="note">Calon | Pengundi | Undi</div>
-        </div>
-        <div class="box output" style="min-height:120px;">
-          <div class="label">KEPUTUSAN SEMENTARA</div>
-        </div>
-        <div class="box input" style="min-height:70px;">
-          <div class="label">PAUTAN CEPAT</div>
-        </div>
-      </div>
-    </div>
-    <div class="box output" style="min-height:40px;">
-      <div class="label">FOOTER</div>
-    </div>
-  </div>
-  <!-- Ringkasan elemen & nombor dibuang -->
+  <script>
+    // Contoh: kira peratus penyertaan berdasarkan undi / pengundi berdaftar
+    (function(){
+      const undi = 180; const pengundi = 245; const peratus = Math.round(undi / pengundi * 100);
+      document.getElementById('statPeratus').textContent = peratus + '%';
+    })();
+  </script>
 </body>
 </html>

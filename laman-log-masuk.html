@@ -2,66 +2,86 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8" />
-  <title>Wireframe: Laman Log Masuk</title>
+  <title>Log Masuk Pengguna</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="wireframe.css" />
   <style>
-    * { box-sizing:border-box; }
     body { font-family:Arial, sans-serif; margin:0; padding:16px; background:#fff; color:#000; }
-    h1 { margin:0 0 12px; font-size:20px; }
-    p { font-size:13px; }
-    .legend span { display:inline-block; padding:4px 8px; margin:4px 8px 4px 0; border:2px solid #000; font-size:11px; }
-    .legend .input { border-style:dashed; }
-    .legend .output { border-style:solid; }
-    .canvas { max-width:760px; margin:0 auto; border:3px solid #000; padding:12px; }
-    .box { border:2px solid #000; padding:8px; margin-bottom:12px; background:#fff; position:relative; }
-    .box.input { border-style:dashed; }
-    .callout { position:absolute; top:4px; right:4px; background:#000; color:#fff; font-size:10px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:2px; }
-    .label { font-size:11px; font-weight:bold; text-transform:uppercase; margin-bottom:4px; }
-    .note { font-size:11px; font-style:italic; }
-    .center-block { max-width:420px; margin:0 auto; }
-    ol { font-size:12px; line-height:1.5; }
+    .wrapper { max-width:860px; margin:0 auto; border:3px solid #000; padding:16px; }
+    .muted { color:#888; }
+    form label { display:block; font-size:13px; font-weight:600; margin-top:12px; }
+    form input { width:100%; padding:6px 8px; margin-top:4px; border:2px solid #000; background:#fff; }
+    button { cursor:pointer; }
+    .actions-row { margin-top:16px; display:flex; gap:12px; }
+    table { width:100%; border-collapse:collapse; font-size:12px; }
+    th, td { border:2px solid #000; padding:4px 6px; text-align:left; }
   </style>
 </head>
 <body>
-  <h1>Wireframe Ringkas: Log Masuk</h1>
-  <p>Versi dipermudahkan (blok asas). Putus-putus = Input, Penuh = Output.</p>
-  <div class="legend">
-    <strong>Legenda:</strong>
-    <span class="input">Input</span>
-    <span class="output">Output</span>
+  <div class="wrapper">
+    <header>
+      <h1>Sistem Pengundian : Log Masuk</h1>
+      <p class="muted">Masukkan kelayakan anda untuk meneruskan.</p>
+    </header>
+    <main style="display:flex; gap:32px; flex-wrap:wrap; align-items:flex-start;">
+      <section style="flex:1; min-width:320px;">
+        <h2>Borang Log Masuk</h2>
+        <form id="loginForm" autocomplete="off">
+          <label>ID / Emel
+            <input type="text" name="id" placeholder="A21EC0123 atau nama@contoh.edu" required>
+          </label>
+          <label>Kata Laluan
+            <input type="password" name="kata_laluan" required>
+          </label>
+          <div class="actions-row">
+            <button type="submit">Log Masuk</button>
+            <button type="reset">Kosongkan</button>
+          </div>
+          <div id="msg" class="muted" style="margin-top:8px;"></div>
+        </form>
+        <p style="margin-top:16px; font-size:13px;">Terlupa kata laluan? <a href="#" onclick="alert('Contoh sahaja');return false;">Tetapkan Semula (contoh)</a></p>
+        <p style="margin-top:4px; font-size:13px;">Belum daftar? <a href="laman-pendaftaran-pengguna.html">Daftar Akaun</a></p>
+      </section>
+      <aside style="flex:1; min-width:260px;">
+        <h2>Notis</h2>
+        <div class="card" style="background:#fff;">
+          <p><strong>Contoh Akaun Ujian:</strong></p>
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Peranan</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>A21EC0001</td><td>Pelajar</td></tr>
+              <tr><td>STF102</td><td>Staf</td></tr>
+              <tr><td>admin01</td><td>Admin</td></tr>
+            </tbody>
+          </table>
+          <p class="muted" style="margin-top:8px;">Gunakan mana-mana ID di atas dengan kata laluan contoh: <code>password123</code></p>
+        </div>
+      </aside>
+    </main>
+    <footer style="margin-top:24px;">&copy; 2025 Sistem Pengundian (Prototip Monokrom)</footer>
   </div>
-  <div class="canvas">
-    <div class="box output" style="min-height:50px;">
-      <div class="label">HEADER</div>
-      <div class="note">Nama Sistem</div>
-    </div>
-    <div class="center-block">
-      <div class="box input" style="min-height:160px;">
-        <div class="label">BORANG LOG MASUK</div>
-        <div class="box input" style="min-height:50px; margin:8px 0 8px;">
-          <div class="label">ID / Emel</div>
-        </div>
-        <div class="box input" style="min-height:50px; margin:0 0 8px;">
-          <div class="label">Kata Laluan</div>
-        </div>
-        <div class="box input" style="min-height:40px; margin:0;">
-          <div class="label">Butang Log Masuk</div>
-        </div>
-      </div>
-      <div class="box output" style="min-height:50px;">
-        <div class="label">MAKLUM BALAS</div>
-      </div>
-      <div class="box output" style="min-height:40px;">
-        <div class="label">PAUTAN LUPA KATA LALUAN</div>
-      </div>
-      <div class="box output" style="min-height:40px;">
-        <div class="label">PAUTAN DAFTAR AKAUN</div>
-      </div>
-    </div>
-    <div class="box output" style="min-height:40px;">
-      <div class="label">FOOTER</div>
-    </div>
-  </div>
-  <!-- Ringkasan elemen & nombor dibuang -->
+  <script>
+  const lf = document.getElementById('loginForm');
+  const msg = document.getElementById('msg');
+  if(lf){
+    lf.addEventListener('submit', e => {
+      e.preventDefault();
+      const id = lf.id.value.trim();
+      const pwd = lf.kata_laluan.value;
+      if(!id || !pwd){
+        msg.textContent = 'Sila lengkapkan semua medan.';
+        return;
+      }
+      const demo = ['A21EC0001','STF102','admin01'];
+      if(demo.includes(id) && pwd === 'password123'){
+        msg.textContent = 'Log masuk berjaya (contoh).';
+      } else {
+        msg.textContent = 'ID / kata laluan tidak sah (contoh).';
+      }
+    });
+  }
+  </script>
 </body>
 </html>

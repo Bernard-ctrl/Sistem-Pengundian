@@ -2,68 +2,89 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8" />
-  <title>Wireframe: Laman Pendaftaran Pengguna Baharu</title>
+  <title>Pendaftaran Pengguna</title>
+  <link rel="stylesheet" href="wireframe.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     * { box-sizing: border-box; }
     body { font-family: Arial, sans-serif; margin:0; padding:16px; background:#fff; color:#000; }
     h1 { margin:0 0 12px; font-size:20px; }
     p { font-size:13px; line-height:1.4; }
-    .legend span { display:inline-block; padding:4px 8px; margin:4px 8px 4px 0; border:2px solid #000; font-size:11px; }
-    .legend .input { border-style:dashed; }
-    .legend .output { border-style:solid; }
-    .canvas { max-width:900px; margin:0 auto; border:3px solid #000; padding:12px; }
-    .box { border-style:solid; }
-    .box.input { border-style:solid; }
-    .label { font-size:11px; font-weight:bold; text-transform:uppercase; margin-bottom:4px; }
-    .note { font-size:11px; font-style:italic; }
-    .callout { position:absolute; top:4px; right:4px; background:#000; color:#fff; font-size:10px; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:2px; }
-    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .full { grid-column:1 / -1; }
-    ol { font-size:12px; line-height:1.5; }
-    @media (max-width:640px){ .form-grid { grid-template-columns:1fr; } }
+    .wrapper { max-width:900px; margin:0 auto; border:3px solid #000; padding:12px; }
+    .actions-row { margin-top: 12px; }
+    .muted { color: #888; }
   </style>
 </head>
 <body>
-  <h1>Wireframe Ringkas: Pendaftaran Pengguna</h1>
-  <p>Versi dipermudahkan: hanya blok utama. Putus-putus = <strong>Input</strong>, Penuh = <strong>Output</strong>.</p>
-  <div class="legend">
-    <strong>Legenda:</strong>
-    <!-- Input/Output legend removed -->
+  <div class="wrapper">
+    <header>
+      <h1>Sistem Pengundian : Pendaftaran</h1>
+      <p class="muted">Daftar akaun baharu untuk mengundi calon jawatankuasa.</p>
+    </header>
+    <main style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">
+      <section style="flex:1; min-width:300px;">
+        <h2>Borang Pendaftaran</h2>
+        <form id="registerForm" autocomplete="off">
+          <label>Nama Penuh
+            <input type="text" name="nama" placeholder="Contoh: Siti Nurhaliza" required>
+          </label>
+          <label>No Matrik / ID
+            <input type="text" name="id" placeholder="A21EC0123" required>
+          </label>
+          <label>Emel
+            <input type="email" name="emel" placeholder="nama@contoh.edu" required>
+          </label>
+          <label>Kata Laluan
+            <input type="password" name="kata_laluan" required>
+          </label>
+          <label>Sahkan Kata Laluan
+            <input type="password" name="sahkan" required>
+          </label>
+          <label>Peranan
+            <select name="peranan" required>
+              <option value="">-- Pilih Peranan --</option>
+              <option value="pelajar">Pelajar</option>
+              <option value="staf">Staf</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+          <div class="actions-row">
+            <button type="submit">Daftar</button>
+            <button type="reset">Kosongkan</button>
+          </div>
+          <div id="msg" class="muted"></div>
+        </form>
+      </section>
+      <aside style="flex:1; min-width:260px;">
+        <h2>Maklumat</h2>
+        <div class="card">
+          <p><strong>Kriteria:</strong></p>
+          <ul style="margin:0 0 12px 18px; font-size:13px; line-height:1.4;">
+            <li>Matrik unik (tiada duplikat)</li>
+            <li>Kata laluan minimum 8 aksara</li>
+            <li>Emel aktif untuk notifikasi (contoh sahaja)</li>
+          </ul>
+          <p class="muted">Data ini hanya contoh statik; tiada penyimpanan sebenar.</p>
+        </div>
+        <p style="margin-top:16px;">Sudah ada akaun? <a href="laman-log-masuk.html">Log Masuk</a></p>
+      </aside>
+    </main>
+    <footer>
+      &copy; 2025 Sistem Pengundian (Prototip Monokrom)
+    </footer>
   </div>
-  <div class="canvas">
-    <div class="box output" style="min-height:50px;">
-      <div class="label">HEADER</div>
-      <div class="note">Nama Sistem</div>
-    </div>
-    <div class="box input" style="min-height:180px;">
-      <div class="label">BORANG PENDAFTARAN RINGKAS</div>
-      <div class="form-grid">
-        <div class="box input" style="margin:0; min-height:60px;">
-          <div class="label">Nama / ID</div>
-        </div>
-        <div class="box input" style="margin:0; min-height:60px;">
-          <div class="label">Emel</div>
-        </div>
-        <div class="box input" style="margin:0; min-height:60px;">
-          <div class="label">Kata Laluan</div>
-        </div>
-        <div class="box input" style="margin:0; min-height:60px;">
-          <div class="label">Butang Daftar</div>
-        </div>
-      </div>
-    </div>
-    <div class="box output" style="min-height:70px;">
-      <div class="label">MAKLUM BALAS</div>
-      <div class="note">Berjaya / Ralat</div>
-    </div>
-    <div class="box output" style="min-height:40px;">
-      <div class="label">PAUTAN LOG MASUK</div>
-    </div>
-    <div class="box output" style="min-height:40px;">
-      <div class="label">FOOTER</div>
-    </div>
-  </div>
-  <!-- Ringkasan elemen & nombor dibuang -->
-</body>
-</html>
+  <script>
+  const f = document.getElementById('registerForm');
+  const msg = document.getElementById('msg');
+  if(f){
+    f.addEventListener('submit', e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(f).entries());
+      if(data.kata_laluan !== data.sahkan){
+        msg.textContent = 'Ralat: Kata laluan tidak sepadan.';
+        return;
+      }
+      msg.textContent = 'Pendaftaran berjaya (contoh). Anda boleh terus log masuk.';
+    });
+  }
+  </script>

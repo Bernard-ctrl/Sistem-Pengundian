@@ -6,23 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="wireframe.css" />
   <style>
-    body { font-family:Arial, sans-serif; margin:0; padding:16px; background:#fff; color:#000; }
-    .wrapper { max-width:1200px; margin:0 auto; border:3px solid #000; padding:16px; }
-    header h1 { margin:0 0 4px; font-size:22px; }
-    .grid-calon { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
-    .calon { border:2px solid #000; padding:12px; background:#fff; display:flex; flex-direction:column; gap:8px; }
-    .calon h3 { margin:0; font-size:16px; }
-    .calon p { margin:0; font-size:12px; line-height:1.4; }
-    .calon footer { margin-top:auto; }
-    form.vote-form { margin-top:8px; }
+    body { font-family:Arial, sans-serif; margin:0; padding:24px; background:#fff; color:#000; font-size:18px; }
+    .wrapper { max-width:900px; margin:0 auto; border:4px solid #000; padding:24px; }
+    header h1 { margin:0 0 8px; font-size:28px; }
+    p, label { font-size:18px; }
+    .calon-list { display:flex; flex-direction:column; gap:12px; margin-top:12px; }
+    .calon-row { border:3px solid #000; padding:12px; display:flex; align-items:center; gap:12px; background:#fff; }
     .actions-row { margin-top:20px; display:flex; gap:12px; }
-    fieldset { border:2px solid #000; padding:12px; }
-    legend { padding:0 6px; font-weight:bold; }
-    .muted { color:#666; font-size:12px; }
-    .alert { border:2px solid #000; padding:10px; font-size:13px; background:#fff; }
-    .success { border-style:solid; }
-    .vote-submit { padding:12px 20px; border:3px solid #000; background:#fff; cursor:pointer; font-size:15px; }
-    .vote-submit:hover { background:#000; color:#fff; }
+    .vote-submit { padding:14px 22px; border:4px solid #000; background:#fff; cursor:pointer; font-size:18px; }
   </style>
 </head>
 <body>
@@ -32,60 +23,21 @@
       <p class="muted">Sila pilih seorang calon untuk jawatan Pengerusi.</p>
     </header>
     <main>
-      <form id="voteForm" class="vote-form" autocomplete="off">
-        <fieldset>
-          <legend>Senarai Calon</legend>
-          <div class="grid-calon" role="list" aria-label="Calon">
-            <label class="calon" role="listitem">
-              <h3><input type="radio" name="calon" value="aisyah" required> Nur Aisyah</h3>
-              <p><strong>Fakulti:</strong> Sains Komputer</p>
-              <p><strong>Manifesto:</strong> Digitalisasi proses kelab dan lebih bengkel teknologi.</p>
-              <footer class="muted">Kod: C01</footer>
-            </label>
-            <label class="calon" role="listitem">
-              <h3><input type="radio" name="calon" value="faiz"> Faiz Kamal</h3>
-              <p><strong>Fakulti:</strong> Kejuruteraan</p>
-              <p><strong>Manifesto:</strong> Infrastruktur makmal dinaik taraf & peluang industri.</p>
-              <footer class="muted">Kod: C02</footer>
-            </label>
-            <label class="calon" role="listitem">
-              <h3><input type="radio" name="calon" value="lim"> Lim Wei Jun</h3>
-              <p><strong>Fakulti:</strong> Perniagaan</p>
-              <p><strong>Manifesto:</strong> Program keusahawanan pelajar & mentor alumni.</p>
-              <footer class="muted">Kod: C03</footer>
-            </label>
-            <label class="calon" role="listitem">
-              <h3><input type="radio" name="calon" value="inderjeet"> Inderjeet Singh</h3>
-              <p><strong>Fakulti:</strong> Sains Sosial</p>
-              <p><strong>Manifesto:</strong> Inklusiviti & aktiviti silang budaya kampus.</p>
-              <footer class="muted">Kod: C04</footer>
-            </label>
-          </div>
-          <div class="actions-row">
-            <button type="submit" class="vote-submit">Hantar Undi</button>
-            <button type="reset" class="vote-submit" style="border-style:dashed;">Kosongkan</button>
-          </div>
-          <div id="msg" class="muted" style="margin-top:12px;"></div>
-        </fieldset>
+      <p>Pilih satu calon sahaja dan tekan Hantar.</p>
+      <form>
+        <div class="calon-list">
+          <label class="calon-row"><input type="radio" name="calon" required> Nur Aisyah</label>
+          <label class="calon-row"><input type="radio" name="calon"> Faiz Kamal</label>
+          <label class="calon-row"><input type="radio" name="calon"> Lim Wei Jun</label>
+          <label class="calon-row"><input type="radio" name="calon"> Inderjeet Singh</label>
+        </div>
+        <div class="actions-row">
+          <button type="button" class="vote-submit">Hantar</button>
+        </div>
       </form>
     </main>
     
   </div>
-  <script>
-    const vf = document.getElementById('voteForm');
-    const msg = document.getElementById('msg');
-    if(vf){
-      vf.addEventListener('submit', e => {
-        e.preventDefault();
-        const data = new FormData(vf);
-        const pilihan = data.get('calon');
-        if(!pilihan){
-          msg.textContent = 'Sila pilih seorang calon.';
-          return;
-        }
-        msg.textContent = 'Undi direkod (contoh) untuk calon: ' + pilihan + '. Terima kasih.';
-      });
-    }
-  </script>
+  
 </body>
 </html>

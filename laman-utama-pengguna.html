@@ -6,29 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="wireframe.css" />
   <style>
-    body { font-family:Arial, sans-serif; margin:0; padding:16px; background:#fff; color:#000; }
-    .wrapper { max-width:1300px; margin:0 auto; border:3px solid #000; padding:16px; }
-    header h1 { margin:0 0 4px; font-size:22px; }
+    body { font-family:Arial, sans-serif; margin:0; padding:24px; background:#fff; color:#000; font-size:18px; }
+    .wrapper { max-width:900px; margin:0 auto; border:4px solid #000; padding:24px; }
+    header h1 { margin:0 0 8px; font-size:28px; }
     nav ul { list-style:none; padding:0; margin:0; display:flex; gap:12px; flex-wrap:wrap; }
     nav a { text-decoration:none; color:#000; padding:4px 8px; border:2px solid #000; display:inline-block; font-size:13px; }
     nav a:hover { background:#000; color:#fff; }
-    .layout { display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; }
-    .side { flex:0 0 260px; display:flex; flex-direction:column; gap:16px; }
-    .main { flex:1; display:flex; flex-direction:column; gap:16px; }
-    .card { border:2px solid #000; padding:12px; background:#fff; }
-    .profile-table { width:100%; border-collapse:collapse; font-size:12px; }
-    .profile-table th, .profile-table td { border:2px solid #000; padding:4px 6px; text-align:left; }
-    .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
-    .stat-box { border:2px solid #000; padding:10px; text-align:center; }
-    .stat-box h3 { margin:0; font-size:14px; }
-    .stat-box .num { font-size:26px; font-weight:bold; margin-top:4px; }
-    .results-table { width:100%; border-collapse:collapse; font-size:12px; }
-    .results-table th, .results-table td { border:2px solid #000; padding:4px 6px; }
-    .quick-links a { display:block; padding:6px 8px; border:2px solid #000; text-decoration:none; color:#000; margin-bottom:8px; font-size:13px; }
-    .quick-links a:hover { background:#000; color:#fff; }
-    .vote-btn { width:100%; padding:12px; border:3px solid #000; font-size:16px; background:#fff; cursor:pointer; }
+  .layout { display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; }
+  .side { flex:0 0 300px; display:flex; flex-direction:column; gap:16px; }
+  .main { flex:1; display:flex; flex-direction:column; gap:16px; }
+  .card { border:3px solid #000; padding:16px; background:#fff; }
+  .profile-table { width:100%; border-collapse:collapse; font-size:18px; }
+  .profile-table th, .profile-table td { border:3px solid #000; padding:8px 10px; text-align:left; }
+  .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .stat-box { border:3px solid #000; padding:12px; text-align:center; }
+  .stat-box h3 { margin:0; font-size:18px; }
+  .stat-box .num { font-size:30px; font-weight:bold; margin-top:6px; }
+  .results-table { width:100%; border-collapse:collapse; font-size:18px; }
+  .results-table th, .results-table td { border:3px solid #000; padding:8px 10px; }
+  .vote-btn { width:100%; padding:14px; border:4px solid #000; font-size:18px; background:#fff; cursor:pointer; }
     .vote-btn:hover { background:#000; color:#fff; }
-    .muted { color:#666; font-size:12px; }
+  .muted { color:#666; }
     footer { margin-top:24px; font-size:12px; }
   </style>
 </head>
@@ -72,7 +70,7 @@
       <main class="main">
         <section class="card" aria-labelledby="pengumumanTitle">
           <h2 id="pengumumanTitle" style="margin-top:0; font-size:16px;">Pengumuman</h2>
-          <ul style="margin:0 0 4px 18px; font-size:13px; line-height:1.4;">
+          <ul style="margin:0 0 4px 18px; line-height:1.6;">
             <li>Pembukaan undian: 10 Mac 2025 (8:00 pagi)</li>
             <li>Penutupan undian: 12 Mac 2025 (5:00 petang)</li>
           </ul>
@@ -107,12 +105,6 @@
     </div>
     
   </div>
-  <script>
-    // Contoh: kira peratus penyertaan berdasarkan undi / pengundi berdaftar
-    (function(){
-      const undi = 180; const pengundi = 245; const peratus = Math.round(undi / pengundi * 100);
-      document.getElementById('statPeratus').textContent = peratus + '%';
-    })();
-  </script>
+  
 </body>
 </html>

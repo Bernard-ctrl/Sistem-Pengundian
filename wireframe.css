@@ -22,7 +22,11 @@ header, footer, nav, section, aside, main { border:var(--border); padding:12px; 
 .grid.cols-2 { grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); }
 .card { border:var(--border); padding:12px; background:#fff; display:flex; flex-direction:column; gap:8px; }
 .card header { border:none; padding:0; }
-.muted { font-size:12px; font-style:italic; }
+/* Generic muted style */
+.muted { font-style:italic; }
+
+/* Make all paragraphs with class "muted" bigger */
+p.muted { font-size:20px !important; }
 hr { border:none; border-top:var(--border); margin:24px 0; }
 
 form { display:grid; gap:8px; max-width:520px; }

@@ -24,6 +24,7 @@
             </button>
             <div class="nav-links" id="navLinks">
                 <button id="homeNavBtn" class="nav-btn" onclick="showSection('home')">Utama</button>
+                <button id="voteNavBtn" class="nav-btn" style="display:none;" onclick="showSection('vote')">Undi</button>
                 <button id="signupNavBtn" class="nav-btn" onclick="showSection('signup')">Daftar</button>
                 <button id="signinNavBtn" class="nav-btn" onclick="showSection('signin')">Log Masuk</button>
                 <button id="adminSignInNavBtn" class="nav-btn ghost" onclick="window.location.href='admin.html'">Admin</button>
@@ -139,8 +140,9 @@
             </section>
         </div>
 
-        <!-- Voting area (shown after login) -->
-        <section id="vote-section" class="panel vote-panel" style="display:none;">
+        <!-- Voting Section (separate page) -->
+        <div id="vote-section" class="vote-section" style="display:none;">
+        <section class="panel vote-panel">
             <div class="panel-header">
                 <div>
                     <p class="eyebrow">Sesi undian aktif</p>
@@ -168,7 +170,7 @@
             </form>
             <div id="result" class="form-result"></div>
         </section>
-        <p id="vote-login-msg" class="helper-text" style="display:none;">Sila log masuk untuk mengundi.</p>
+        </div>
 
         <section id="signup-section" class="auth-section" style="display:none;">
             <div class="section-heading compact">
@@ -224,47 +226,27 @@
     // Section navigation
     function showSection(section) {
         document.getElementById('home-section').style.display = (section === 'home') ? 'block' : 'none';
+        document.getElementById('vote-section').style.display = (section === 'vote') ? 'block' : 'none';
         document.getElementById('signup-section').style.display = (section === 'signup') ? 'block' : 'none';
         document.getElementById('signin-section').style.display = (section === 'signin') ? 'block' : 'none';
         document.getElementById('admin-section').style.display = (section === 'admin') ? 'block' : 'none';
-        // Only show vote-section when on home and a non-admin user is logged in
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        const isAdmin = localStorage.getItem('isAdmin') === 'true';
-        if (section === 'home' && isLoggedIn && !isAdmin) {
-            document.getElementById('vote-section').style.display = 'block';
-            document.getElementById('vote-login-msg').style.display = 'none';
-        } else if (section !== 'home') {
-            document.getElementById('vote-section').style.display = 'none';
-        }
     }
 
     // Show admin nav if user is admin (demo, real check is server-side)
     function updateVoteVisibility() {
         const isAdmin = localStorage.getItem('isAdmin') === 'true';
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        
+        // Show/hide navigation buttons based on login status
         document.getElementById('adminNavBtn').style.display = isAdmin ? 'inline-block' : 'none';
-    // Show admin sign-in link only when not admin
-    document.getElementById('adminSignInNavBtn').style.display = (!isAdmin && !isLoggedIn) ? 'inline-block' : 'none';
+        document.getElementById('voteNavBtn').style.display = (isLoggedIn && !isAdmin) ? 'inline-block' : 'none';
+        document.getElementById('adminSignInNavBtn').style.display = (!isAdmin && !isLoggedIn) ? 'inline-block' : 'none';
         document.getElementById('signupNavBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('signinNavBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('logoutNavBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
-
-        if (isLoggedIn && !isAdmin) {
-            // Show vote section only for non-admin users when on home
-            if (document.getElementById('home-section').style.display !== 'none') {
-                document.getElementById('vote-section').style.display = 'block';
-                document.getElementById('vote-login-msg').style.display = 'none';
-            } else {
-                document.getElementById('vote-section').style.display = 'none';
-            }
-        } else {
-            // hide vote section for admins and for anonymous users
-            document.getElementById('vote-section').style.display = 'none';
-            // show login prompt only when not logged in at all
-            document.getElementById('vote-login-msg').style.display = isLoggedIn ? 'none' : 'block';
-        }
-    // Refresh vote controls (disable if already voted client-side)
-    try { updateVoteControls(); } catch (e) { /* ignore if helper not yet defined */ }
+        
+        // Refresh vote controls (disable if already voted client-side)
+        try { updateVoteControls(); } catch (e) { /* ignore if helper not yet defined */ }
     }
     updateVoteVisibility();
 
@@ -366,12 +348,13 @@
                 if (isSuccess) {
                     if (el) el.style.color = '#27ae60';
                     localStorage.setItem('isLoggedIn', 'true');
-                    if (lower.includes('admin')) {
+                    const isAdmin = lower.includes('admin');
+                    if (isAdmin) {
                         localStorage.setItem('isAdmin', 'true');
                     }
                     updateVoteVisibility();
-                    // Auto-direct to home after successful sign-in
-                    showSection('home');
+                    // Auto-direct to vote page for users, home for admin
+                    showSection(isAdmin ? 'home' : 'vote');
                     setTimeout(() => {
                         if (el) el.textContent = '';
                         form.reset();

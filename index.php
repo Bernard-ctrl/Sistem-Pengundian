@@ -1,20 +1,12 @@
 <?php
-// index.php
+// index.php - Updated to use PENGGUNA, CALON, JAWATAN, UNDIAN schema
 
 $host = 'localhost';
 $db = 'pengundian';
 $user = 'root';
 $pass = '';
-$allowed = ['Pengerusi', 'Naib Pengerusi', 'Setiausaha', 'Bendahari'];
-// allowed candidates per position (optional server-side validation)
-$candidates = [
-    'Pengerusi' => ['Ali', 'Aminah', 'Farid'],
-    'Naib Pengerusi' => ['Siti', 'Hassan'],
-    'Setiausaha' => ['Lina', 'Zulkifli'],
-    'Bendahari' => ['Hadi', 'Nurul']
-];
 
-// Connect to MySQL server (no DB yet)
+// Connect to MySQL server
 $conn = new mysqli($host, $user, $pass);
 if ($conn->connect_error) {
     die('Gagal sambungan ke pelayan MySQL.');
@@ -22,76 +14,83 @@ if ($conn->connect_error) {
 
 // Create database if not exists
 $conn->query("CREATE DATABASE IF NOT EXISTS $db");
-
-// Select the database
 $conn->select_db($db);
 
-// Create table for votes if not exists (position + candidate)
-$conn->query("CREATE TABLE IF NOT EXISTS votes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    position VARCHAR(50) NOT NULL,
-    candidate VARCHAR(50) NOT NULL,
-    count INT NOT NULL DEFAULT 0,
-    UNIQUE KEY(position, candidate)
-)");
-
-// Migration: if the table existed with old schema, ensure new columns & index exist
-$res = $conn->query("SHOW COLUMNS FROM votes LIKE 'position'");
-if ($res && $res->num_rows == 0) {
-    $conn->query("ALTER TABLE votes ADD COLUMN position VARCHAR(50) NOT NULL DEFAULT '' AFTER id");
-}
-$res = $conn->query("SHOW COLUMNS FROM votes LIKE 'candidate'");
-if ($res && $res->num_rows == 0) {
-    $conn->query("ALTER TABLE votes ADD COLUMN candidate VARCHAR(50) NOT NULL DEFAULT '' AFTER position");
-}
-// If old `student` column exists, copy values into candidate then keep the column (safe)
-$res = $conn->query("SHOW COLUMNS FROM votes LIKE 'student'");
-if ($res && $res->num_rows > 0) {
-    // copy student -> candidate where candidate empty
-    $conn->query("UPDATE votes SET candidate = student WHERE (candidate = '' OR candidate IS NULL) AND (student <> '' AND student IS NOT NULL)");
-    // drop old student index if present
-    $resIdx = $conn->query("SHOW INDEX FROM votes WHERE Key_name = 'student'");
-    if ($resIdx && $resIdx->num_rows > 0) {
-        $conn->query("ALTER TABLE votes DROP INDEX student");
-    }
-}
-// Ensure unique index on (position,candidate)
-$resIdx = $conn->query("SHOW INDEX FROM votes WHERE Key_name = 'uniq_pos_cand'");
-if (!($resIdx && $resIdx->num_rows > 0)) {
-    // create unique index if not exists
-    $conn->query("ALTER TABLE votes ADD UNIQUE KEY uniq_pos_cand (position, candidate)");
-}
-
-// Create table to track which user voted for which position (one vote per user per position)
-$conn->query("CREATE TABLE IF NOT EXISTS user_votes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    position VARCHAR(50) NOT NULL,
-    candidate VARCHAR(50) NOT NULL,
-    voted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY(username, position)
-)");
-
-// Create users table if not exists
-$conn->query("CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
+// Create PENGGUNA table (Users)
+$conn->query("CREATE TABLE IF NOT EXISTS PENGGUNA (
+    id_Pengguna VARCHAR(10) PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     is_admin TINYINT(1) NOT NULL DEFAULT 0
-)");
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-// Ensure a default admin account exists (username: admin)
+// Create JAWATAN table (Positions)
+$conn->query("CREATE TABLE IF NOT EXISTS JAWATAN (
+    id_Jawatan VARCHAR(10) PRIMARY KEY,
+    nama_Jawatan VARCHAR(50) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+// Create CALON table (Candidates)
+$conn->query("CREATE TABLE IF NOT EXISTS CALON (
+    id_Calon VARCHAR(10) PRIMARY KEY,
+    nama_Calon VARCHAR(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+// Create UNDIAN table (Votes)
+$conn->query("CREATE TABLE IF NOT EXISTS UNDIAN (
+    id_Undi INT AUTO_INCREMENT PRIMARY KEY,
+    id_Pengguna VARCHAR(10) NOT NULL,
+    id_Calon VARCHAR(10) NOT NULL,
+    id_Jawatan VARCHAR(10) NOT NULL,
+    voted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_Pengguna) REFERENCES PENGGUNA(id_Pengguna) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_Calon) REFERENCES CALON(id_Calon) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_Jawatan) REFERENCES JAWATAN(id_Jawatan) ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE KEY unique_vote (id_Pengguna, id_Jawatan),
+    INDEX idx_pengguna (id_Pengguna),
+    INDEX idx_calon (id_Calon),
+    INDEX idx_jawatan (id_Jawatan)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+// Insert default positions if not exist
+$defaultPositions = [
+    ['J01', 'Pengerusi'],
+    ['J02', 'Setiausaha'],
+    ['J03', 'Bendahari']
+];
+foreach ($defaultPositions as $pos) {
+    $stmt = $conn->prepare("INSERT IGNORE INTO JAWATAN (id_Jawatan, nama_Jawatan) VALUES (?, ?)");
+    $stmt->bind_param("ss", $pos[0], $pos[1]);
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Insert default candidates if not exist
+$defaultCandidates = [
+    ['C01', 'Omar'],
+    ['C02', 'Hassan'],
+    ['C03', 'Aiman']
+];
+foreach ($defaultCandidates as $cand) {
+    $stmt = $conn->prepare("INSERT IGNORE INTO CALON (id_Calon, nama_Calon) VALUES (?, ?)");
+    $stmt->bind_param("ss", $cand[0], $cand[1]);
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Ensure default admin user exists
 $defaultAdmin = 'admin';
-$defaultPassword = 'admin'; // change this after first login
-$stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+$defaultPassword = 'admin';
+$stmt = $conn->prepare("SELECT id_Pengguna FROM PENGGUNA WHERE id_Pengguna = ?");
 $stmt->bind_param("s", $defaultAdmin);
 $stmt->execute();
 $stmt->store_result();
 if ($stmt->num_rows === 0) {
     $stmt->close();
     $hash = password_hash($defaultPassword, PASSWORD_DEFAULT);
-    $ins = $conn->prepare("INSERT INTO users (username, password, is_admin) VALUES (?, ?, 1)");
-    $ins->bind_param("ss", $defaultAdmin, $hash);
+    $ins = $conn->prepare("INSERT INTO PENGGUNA (id_Pengguna, nama, password, is_admin) VALUES (?, ?, ?, 1)");
+    $nama = 'Administrator';
+    $ins->bind_param("sss", $defaultAdmin, $nama, $hash);
     $ins->execute();
     $ins->close();
 } else {
@@ -104,203 +103,250 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Signup
     if (isset($_POST['action']) && $_POST['action'] === 'signup') {
-        $username = $_POST['username'];
+        $id_pengguna = $_POST['username']; // Use username as ID
+        $nama = $_POST['nama'] ?? $_POST['username']; // Get name from form
         $password = $_POST['password'];
-        $is_admin = ($username === 'admin') ? 1 : 0; // Simple admin check
+        $is_admin = 0; // Regular users are not admin by default
+        
         // Check if user exists
-        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        $stmt = $conn->prepare("SELECT id_Pengguna FROM PENGGUNA WHERE id_Pengguna = ?");
+        $stmt->bind_param("s", $id_pengguna);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
-            echo "Username sudah wujud.";
+            echo "ID Pengguna sudah wujud.";
             $stmt->close();
             $conn->close();
             exit;
         }
         $stmt->close();
+        
         // Insert new user
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO users (username, password, is_admin) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $username, $hash, $is_admin);
+        $stmt = $conn->prepare("INSERT INTO PENGGUNA (id_Pengguna, nama, password, is_admin) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sssi", $id_pengguna, $nama, $hash, $is_admin);
         $stmt->execute();
         $stmt->close();
         echo "Pendaftaran berjaya. Sila log masuk.";
         $conn->close();
         exit;
     }
+    
     // Sign in
     if (isset($_POST['action']) && $_POST['action'] === 'signin') {
-        $username = $_POST['username'];
+        $id_pengguna = $_POST['username'];
         $password = $_POST['password'];
-        $stmt = $conn->prepare("SELECT password, is_admin FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        $stmt = $conn->prepare("SELECT password, is_admin, nama FROM PENGGUNA WHERE id_Pengguna = ?");
+        $stmt->bind_param("s", $id_pengguna);
         $stmt->execute();
-        $stmt->bind_result($hash, $is_admin);
+        $stmt->bind_result($hash, $is_admin, $nama);
         if ($stmt->fetch() && password_verify($password, $hash)) {
-            $_SESSION['username'] = $username;
+            $_SESSION['id_pengguna'] = $id_pengguna;
+            $_SESSION['nama'] = $nama;
             $_SESSION['is_admin'] = $is_admin;
-            // Debug: echo session id and cookie to help client-side troubleshooting
             $sid = session_id();
             $cookie = isset($_COOKIE[session_name()]) ? $_COOKIE[session_name()] : '(none)';
             echo ($is_admin ? "Log masuk sebagai admin." : "Log masuk berjaya.") . " SESSION_ID=" . $sid . " COOKIE=" . $cookie;
         } else {
-            echo "Log masuk gagal. Sila semak nama pengguna dan kata laluan.";
+            echo "Log masuk gagal. Sila semak ID pengguna dan kata laluan.";
         }
         $stmt->close();
         $conn->close();
         exit;
     }
+    
     // Voting (only for logged-in users)
-    if (isset($_POST['position']) && isset($_POST['student'])) {
-        // Debug: include session id/cookie info when not logged in
-        if (!isset($_SESSION['username'])) {
+    if (isset($_POST['id_jawatan']) && isset($_POST['id_calon'])) {
+        if (!isset($_SESSION['id_pengguna'])) {
             $sid = session_id();
             $cookie = isset($_COOKIE[session_name()]) ? $_COOKIE[session_name()] : '(none)';
             echo "Anda mesti log masuk untuk mengundi. SESSION_ID=" . $sid . " COOKIE=" . $cookie;
             $conn->close();
             exit;
         }
-        $position = $_POST['position'];
-        $student = $_POST['student'];
-        if (!in_array($position, $allowed)) {
-            echo "Pilihan jawatan tidak sah.";
+        
+        $id_pengguna = $_SESSION['id_pengguna'];
+        $id_jawatan = $_POST['id_jawatan'];
+        $id_calon = $_POST['id_calon'];
+        
+        // Validate jawatan exists
+        $stmt = $conn->prepare("SELECT nama_Jawatan FROM JAWATAN WHERE id_Jawatan = ?");
+        $stmt->bind_param("s", $id_jawatan);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows === 0) {
+            echo "Jawatan tidak sah.";
+            $stmt->close();
             $conn->close();
             exit;
         }
-        if (isset($candidates[$position]) && !in_array($student, $candidates[$position])) {
-            echo "Pilihan calon tidak sah.";
+        $stmt->bind_result($nama_jawatan);
+        $stmt->fetch();
+        $stmt->close();
+        
+        // Validate calon exists
+        $stmt = $conn->prepare("SELECT nama_Calon FROM CALON WHERE id_Calon = ?");
+        $stmt->bind_param("s", $id_calon);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows === 0) {
+            echo "Calon tidak sah.";
+            $stmt->close();
             $conn->close();
             exit;
         }
-            // Enforce one vote per user per position using user_votes table and transaction
-            $username = $_SESSION['username'];
-            // Start transaction
-            $conn->begin_transaction();
-            try {
-                // Check if user already voted for this position
-                $chk = $conn->prepare("SELECT id FROM user_votes WHERE username = ? AND position = ?");
-                $chk->bind_param("ss", $username, $position);
-                $chk->execute();
-                $chk->store_result();
-                if ($chk->num_rows > 0) {
-                    $chk->close();
-                    $conn->rollback();
-                    echo "Anda telah mengundi untuk jawatan ini sebelum ini.";
-                    $conn->close();
-                    exit;
-                }
+        $stmt->bind_result($nama_calon);
+        $stmt->fetch();
+        $stmt->close();
+        
+        // Start transaction
+        $conn->begin_transaction();
+        try {
+            // Check if user already voted for this position
+            $chk = $conn->prepare("SELECT id_Undi FROM UNDIAN WHERE id_Pengguna = ? AND id_Jawatan = ?");
+            $chk->bind_param("ss", $id_pengguna, $id_jawatan);
+            $chk->execute();
+            $chk->store_result();
+            if ($chk->num_rows > 0) {
                 $chk->close();
-
-                // Record user's vote
-                $ins = $conn->prepare("INSERT INTO user_votes (username, position, candidate) VALUES (?, ?, ?)");
-                $ins->bind_param("sss", $username, $position, $student);
-                if (!$ins->execute()) {
-                    $err = $ins->error;
-                    $ins->close();
-                    $conn->rollback();
-                    echo "DB error recording user vote: " . $err;
-                    $conn->close();
-                    exit;
-                }
+                $conn->rollback();
+                echo "Anda telah mengundi untuk jawatan ini sebelum ini.";
+                $conn->close();
+                exit;
+            }
+            $chk->close();
+            
+            // Record vote
+            $ins = $conn->prepare("INSERT INTO UNDIAN (id_Pengguna, id_Calon, id_Jawatan) VALUES (?, ?, ?)");
+            $ins->bind_param("sss", $id_pengguna, $id_calon, $id_jawatan);
+            if (!$ins->execute()) {
+                $err = $ins->error;
                 $ins->close();
-
-                // Insert or update aggregated votes table
-                $stmt = $conn->prepare("INSERT INTO votes (position, candidate, count) VALUES (?, ?, 1)
-                    ON DUPLICATE KEY UPDATE count = count + 1");
-                $stmt->bind_param("ss", $position, $student);
-                if (!$stmt->execute()) {
-                    $err = $stmt->error;
-                    $stmt->close();
-                    $conn->rollback();
-                    echo "DB error during insert: " . $err;
-                    $conn->close();
-                    exit;
-                }
-                $stmt->close();
-
-                // Commit
-                $conn->commit();
-
-                // Get updated count
-                $stmt = $conn->prepare("SELECT count FROM votes WHERE position = ? AND candidate = ?");
-                $stmt->bind_param("ss", $position, $student);
+                $conn->rollback();
+                echo "Ralat DB: " . $err;
+                $conn->close();
+                exit;
+            }
+            $ins->close();
+            
+            // Commit
+            $conn->commit();
+            
+            // Get vote count for admin
+            if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1) {
+                $stmt = $conn->prepare("SELECT COUNT(*) FROM UNDIAN WHERE id_Calon = ? AND id_Jawatan = ?");
+                $stmt->bind_param("ss", $id_calon, $id_jawatan);
                 $stmt->execute();
                 $stmt->bind_result($count);
                 $stmt->fetch();
                 $stmt->close();
-
-                // Only reveal count to admins
-                if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1) {
-                    echo "Undian untuk $student ($position) telah direkodkan. Jumlah undian: " . $count;
-                } else {
-                    echo "Undian untuk $student ($position) telah direkodkan.";
-                }
-                $conn->close();
-                exit;
-            } catch (Exception $e) {
-                $conn->rollback();
-                echo "Exception during voting: " . $e->getMessage();
-                $conn->close();
-                exit;
+                echo "Undian untuk $nama_calon ($nama_jawatan) telah direkodkan. Jumlah undian: " . $count;
+            } else {
+                echo "Undian untuk $nama_calon ($nama_jawatan) telah direkodkan.";
             }
+            $conn->close();
+            exit;
+        } catch (Exception $e) {
+            $conn->rollback();
+            echo "Ralat semasa mengundi: " . $e->getMessage();
+            $conn->close();
+            exit;
+        }
     }
-
-    // Other POST actions...
 }
 
 // Admin endpoints (GET)
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
-    // Allow non-admin users to request their own votes
+    // Get positions (jawatan) - public endpoint
+    if ($_GET['action'] === 'get_jawatan') {
+        $result = $conn->query("SELECT id_Jawatan, nama_Jawatan FROM JAWATAN ORDER BY id_Jawatan");
+        $jawatan = [];
+        while ($row = $result->fetch_assoc()) {
+            $jawatan[] = $row;
+        }
+        header('Content-Type: application/json');
+        echo json_encode($jawatan);
+        $conn->close();
+        exit;
+    }
+    
+    // Get candidates (calon) - public endpoint
+    if ($_GET['action'] === 'get_calon') {
+        $result = $conn->query("SELECT id_Calon, nama_Calon FROM CALON ORDER BY id_Calon");
+        $calon = [];
+        while ($row = $result->fetch_assoc()) {
+            $calon[] = $row;
+        }
+        header('Content-Type: application/json');
+        echo json_encode($calon);
+        $conn->close();
+        exit;
+    }
+    
+    // Allow users to request their own votes
     if ($_GET['action'] === 'my_votes') {
-        if (!isset($_SESSION['username'])) {
+        if (!isset($_SESSION['id_pengguna'])) {
             header('Content-Type: application/json');
             echo json_encode([]);
             $conn->close();
             exit;
         }
-        $username = $_SESSION['username'];
-        $stmt = $conn->prepare("SELECT position FROM user_votes WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        $id_pengguna = $_SESSION['id_pengguna'];
+        $stmt = $conn->prepare("SELECT id_Jawatan FROM UNDIAN WHERE id_Pengguna = ?");
+        $stmt->bind_param("s", $id_pengguna);
         $stmt->execute();
         $res = $stmt->get_result();
-        $positions = [];
+        $jawatan = [];
         while ($row = $res->fetch_assoc()) {
-            $positions[] = $row['position'];
+            $jawatan[] = $row['id_Jawatan'];
         }
         header('Content-Type: application/json');
-        echo json_encode($positions);
+        echo json_encode($jawatan);
         $stmt->close();
         $conn->close();
         exit;
     }
+    
+    // Admin-only endpoints
     if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
         echo "Akses ditolak. Anda bukan admin.";
         $conn->close();
         exit;
     }
+    
     if ($_GET['action'] === 'view_users') {
-        $result = $conn->query("SELECT username, is_admin FROM users");
+        $result = $conn->query("SELECT id_Pengguna, nama, is_admin FROM PENGGUNA ORDER BY id_Pengguna");
         echo "<h3>Senarai Pengguna</h3><ul>";
         while ($row = $result->fetch_assoc()) {
-            echo "<li>" . htmlspecialchars($row['username']) . ($row['is_admin'] ? " (Admin)" : "") . "</li>";
+            echo "<li>" . htmlspecialchars($row['id_Pengguna']) . " - " . htmlspecialchars($row['nama']) . ($row['is_admin'] ? " (Admin)" : "") . "</li>";
         }
         echo "</ul>";
         $conn->close();
         exit;
     }
+    
     if ($_GET['action'] === 'view_votes') {
-        $result = $conn->query("SELECT position, candidate, count FROM votes ORDER BY position, candidate");
+        $result = $conn->query("
+            SELECT 
+                j.nama_Jawatan,
+                c.nama_Calon,
+                COUNT(*) AS jumlah_undian
+            FROM UNDIAN u
+            JOIN CALON c ON u.id_Calon = c.id_Calon
+            JOIN JAWATAN j ON u.id_Jawatan = j.id_Jawatan
+            GROUP BY j.nama_Jawatan, c.nama_Calon
+            ORDER BY j.nama_Jawatan, jumlah_undian DESC
+        ");
         echo "<h3>Senarai Undian</h3>";
         $currentPos = null;
         echo "<div>";
         while ($row = $result->fetch_assoc()) {
-            if ($currentPos !== $row['position']) {
+            if ($currentPos !== $row['nama_Jawatan']) {
                 if ($currentPos !== null) echo "</ul>";
-                $currentPos = $row['position'];
+                $currentPos = $row['nama_Jawatan'];
                 echo "<h4>" . htmlspecialchars($currentPos) . "</h4><ul>";
             }
-            echo "<li>" . htmlspecialchars($row['candidate']) . ": " . $row['count'] . " undian</li>";
+            echo "<li>" . htmlspecialchars($row['nama_Calon']) . ": " . $row['jumlah_undian'] . " undian</li>";
         }
         if ($currentPos !== null) echo "</ul>";
         echo "</div>";
@@ -308,7 +354,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         exit;
     }
 }
-
 
 // If accessed directly, show nothing or redirect
 header('Location: index.html');

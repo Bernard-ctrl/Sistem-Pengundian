@@ -11,84 +11,216 @@
 <body>
 
     <!-- Navbar -->
-    <nav id="navbar" style="width:100%;background:#2980b9;color:#fff;padding:16px 0;box-shadow:0 2px 8px rgba(44,62,80,0.08);">
-        <div style="max-width:900px;margin:auto;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:1.3rem;font-weight:600;letter-spacing:1px;">Sistem Pengundian</span>
-            <div>
-                <button id="homeNavBtn" onclick="showSection('home')">Home</button>
-                <button id="signupNavBtn" onclick="showSection('signup')">Sign Up</button>
-                <button id="signinNavBtn" onclick="showSection('signin')">Sign In</button>
-                <button id="adminSignInNavBtn" onclick="window.location.href='admin.html'">Admin Sign In</button>
-                <button id="logoutNavBtn" style="display:none;" onclick="logout()">Logout</button>
-                <button id="adminNavBtn" style="display:none;" onclick="showSection('admin')">Admin</button>
+    <nav id="navbar" class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <span>Sistem Pengundian</span>
+                <small>Kelab Komputer</small>
+            </div>
+            <button id="navToggle" class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <button id="homeNavBtn" class="nav-btn" onclick="showSection('home')">Utama</button>
+                <button id="signupNavBtn" class="nav-btn" onclick="showSection('signup')">Daftar</button>
+                <button id="signinNavBtn" class="nav-btn" onclick="showSection('signin')">Log Masuk</button>
+                <button id="adminSignInNavBtn" class="nav-btn ghost" onclick="window.location.href='admin.html'">Admin</button>
+                <button id="logoutNavBtn" class="nav-btn primary" style="display:none;" onclick="logout()">Log Keluar</button>
+                <button id="adminNavBtn" class="nav-btn" style="display:none;" onclick="showSection('admin')">Panel Admin</button>
             </div>
         </div>
     </nav>
 
-    
+    <main>
+        <!-- Home / Hero -->
+        <div id="home-section" class="home-section">
+            <section class="hero">
+                <div class="hero-text">
+                    <p class="eyebrow">Undian digital yang telus & pantas</p>
+                    <h1>Urus dan pantau pengundian jawatankuasa kelab dalam satu papan pemuka moden.</h1>
+                    <p class="lead">Benarkan pelajar mendaftar, log masuk dan mengundi dengan mudah sambil pihak pentadbir memantau kemajuan secara masa nyata.</p>
+                    <div class="hero-actions">
+                        <button class="btn primary" onclick="showSection('signup')">Mula Daftar</button>
+                        <button class="btn ghost" onclick="showSection('signin')">Saya sudah berdaftar</button>
+                    </div>
+                    <ul class="hero-stats">
+                        <li>
+                            <strong>100%</strong>
+                            <span>Jejak audit terperinci</span>
+                        </li>
+                        <li>
+                            <strong>&lt;2 min</strong>
+                            <span>Tempoh purata daftar</span>
+                        </li>
+                        <li>
+                            <strong>24/7</strong>
+                            <span>Akses kepada pentadbir</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="hero-card">
+                    <div class="card-head">
+                        <p class="eyebrow">Status Sesi</p>
+                        <span class="badge success">Aktif</span>
+                    </div>
+                    <h3>Pengundian Kelab Komputer</h3>
+                    <div class="pill-list">
+                        <span class="pill">Pengerusi</span>
+                        <span class="pill">Naib Pengerusi</span>
+                        <span class="pill">Setiausaha</span>
+                        <span class="pill">Bendahari</span>
+                    </div>
+                    <button class="btn w-100" onclick="showSection('signin')">Teruskan ke undian</button>
+                </div>
+            </section>
 
-    <!-- Sections -->
-    <div id="home-section">
-        <h1>Selamat Datang ke Sistem Pengundian Jawatankuasa Kelab Komputer</h1>
-        <p>Sila daftar, log masuk, dan undi jawatankuasa pilihan anda. Panel admin tersedia untuk pengurusan undian dan pengguna.</p>
-    </div>
+            <section class="feature-section" aria-label="Ciri utama">
+                <div class="section-heading">
+                    <p class="eyebrow">Ciri utama</p>
+                    <h2>Direka untuk pengalaman mengundi kampus yang profesional.</h2>
+                </div>
+                <div class="feature-grid">
+                    <article class="feature-card">
+                        <h3>Reka bentuk responsif</h3>
+                        <p>Boleh dicapai pada telefon, tablet dan desktop tanpa perlu pasang aplikasi tambahan.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Laporan masa nyata</h3>
+                        <p>Pentadbir melihat jumlah undian dan aktiviti pengguna serta dapat memuat turun laporan.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Akses selamat</h3>
+                        <p>Autentikasi berlapis memastikan hanya ahli kelab yang sah boleh mengundi.</p>
+                    </article>
+                </div>
+            </section>
 
-    <!-- Voting area (shown after login) -->
-    <div id="vote-section" style="display:none;">
-        <form id="voteForm" method="POST" action="#">
-            <label for="position">Pilih Jawatan untuk Diundi:</label>
-            <select name="position" id="position" required>
-                <option value="">-- Pilih Jawatan --</option>
-                <option value="Pengerusi">Pengerusi</option>
-                <option value="Naib Pengerusi">Naib Pengerusi</option>
-                <option value="Setiausaha">Setiausaha</option>
-                <option value="Bendahari">Bendahari</option>
-            </select>
+            <section class="steps-section" aria-label="Cara menggunakan">
+                <div class="section-heading">
+                    <p class="eyebrow">3 langkah mudah</p>
+                    <h2>Lengkapkan sesi undian dalam masa kurang 5 minit.</h2>
+                </div>
+                <ol class="steps-list">
+                    <li>
+                        <span class="step-number">01</span>
+                        <div>
+                            <h3>Daftar akaun ahli</h3>
+                            <p>Isi maklumat asas dan sahkan emel pelajar untuk akses sistem.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="step-number">02</span>
+                        <div>
+                            <h3>Log masuk & semak calon</h3>
+                            <p>Pilih jawatan yang ingin diundi dan teliti biodata calon.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="step-number">03</span>
+                        <div>
+                            <h3>Hantar undian anda</h3>
+                            <p>Sistem mengunci jawatan yang telah diundi untuk mengelak pengundian berganda.</p>
+                        </div>
+                    </li>
+                </ol>
+            </section>
 
-            <label for="student">Pilih Calon (Orang):</label>
-            <select name="student" id="student" required>
-                <option value="">-- Pilih Calon --</option>
-            </select>
+            <section class="cta-panel">
+                <div>
+                    <p class="eyebrow">Sedia untuk bermula?</p>
+                    <h2>Aktifkan akaun anda hari ini dan pantau undian secara telus.</h2>
+                </div>
+                <div class="cta-actions">
+                    <button class="btn primary" onclick="showSection('signup')">Buka borang pendaftaran</button>
+                    <button class="btn ghost" onclick="showSection('signin')">Log masuk sebagai ahli</button>
+                </div>
+            </section>
+        </div>
 
-            <button id="voteSubmit" type="button">Undi</button>
-        </form>
-        <div id="result"></div>
-    </div>
-    <div id="vote-login-msg" style="display:none;color:#c0392b;font-weight:600;margin:24px;">Sila log masuk untuk mengundi.</div>
+        <!-- Voting area (shown after login) -->
+        <section id="vote-section" class="panel vote-panel" style="display:none;">
+            <div class="panel-header">
+                <div>
+                    <p class="eyebrow">Sesi undian aktif</p>
+                    <h2>Pilih jawatan untuk diundi</h2>
+                    <p>Setiap jawatan hanya boleh diundi sekali bagi memastikan ketelusan.</p>
+                </div>
+                <span class="badge neutral">Langkah 2</span>
+            </div>
+            <form id="voteForm" method="POST" action="#" class="form-grid">
+                <div class="form-control">
+                    <label for="position">Pilih jawatan</label>
+                    <select name="position" id="position" required>
+                        <option value="">-- Pilih Jawatan --</option>
+                        <option value="Pengerusi">Pengerusi</option>
+                        <option value="Naib Pengerusi">Naib Pengerusi</option>
+                        <option value="Setiausaha">Setiausaha</option>
+                        <option value="Bendahari">Bendahari</option>
+                    </select>
+                </div>
+                <div class="form-control">
+                    <label for="student">Pilih calon</label>
+                    <select name="student" id="student" required>
+                        <option value="">-- Pilih Calon --</option>
+                    </select>
+                </div>
+                <div class="form-action">
+                    <button id="voteSubmit" type="button" class="btn primary w-100">Undi sekarang</button>
+                </div>
+            </form>
+            <div id="result" class="form-result"></div>
+        </section>
+        <p id="vote-login-msg" class="helper-text" style="display:none;">Sila log masuk untuk mengundi.</p>
 
-    <div id="signup-section" style="display:none;">
-        <h2>Sign Up</h2>
-        <form id="signupForm">
-            <input type="hidden" name="action" value="signup">
-            <label for="signup_username">Username:</label>
-            <input type="text" id="signup_username" name="username" required>
-            <label for="signup_password">Password:</label>
-            <input type="password" id="signup_password" name="password" required>
-            <button type="submit">Sign Up</button>
-        </form>
-        <div id="signup-result" style="margin-top:10px;color:#c0392b;font-weight:600;"></div>
-    </div>
+        <section id="signup-section" class="auth-section" style="display:none;">
+            <div class="section-heading compact">
+                <p class="eyebrow">Langkah pertama</p>
+                <h2>Buka akaun pelajar</h2>
+                <p>Pendaftaran membenarkan anda mengundi dan menyemak status calon.</p>
+            </div>
+            <form id="signupForm" class="auth-form">
+                <input type="hidden" name="action" value="signup">
+                <label for="signup_username">Username</label>
+                <input type="text" id="signup_username" name="username" required>
+                <label for="signup_password">Password</label>
+                <input type="password" id="signup_password" name="password" required>
+                <button type="submit" class="btn primary w-100">Daftar</button>
+            </form>
+            <div id="signup-result" class="form-result"></div>
+        </section>
 
-    <div id="signin-section" style="display:none;">
-        <h2>Sign In</h2>
-        <form id="signinForm">
-            <input type="hidden" name="action" value="signin">
-            <label for="signin_username">Username:</label>
-            <input type="text" id="signin_username" name="username" required>
-            <label for="signin_password">Password:</label>
-            <input type="password" id="signin_password" name="password" required>
-            <button type="submit">Sign In</button>
-        </form>
-        <div id="signin-result" style="margin-top:10px;color:#c0392b;font-weight:600;"></div>
-    </div>
+        <section id="signin-section" class="auth-section" style="display:none;">
+            <div class="section-heading compact">
+                <p class="eyebrow">Kembali mengundi</p>
+                <h2>Log masuk akaun anda</h2>
+                <p>Masukkan butiran akaun yang sama seperti ketika pendaftaran.</p>
+            </div>
+            <form id="signinForm" class="auth-form">
+                <input type="hidden" name="action" value="signin">
+                <label for="signin_username">Username</label>
+                <input type="text" id="signin_username" name="username" required>
+                <label for="signin_password">Password</label>
+                <input type="password" id="signin_password" name="password" required>
+                <button type="submit" class="btn primary w-100">Log Masuk</button>
+            </form>
+            <div id="signin-result" class="form-result"></div>
+        </section>
 
-    <div id="admin-section" style="display:none;">
-        <h2>Admin Panel</h2>
-        <p>Welcome, Admin! Here you can manage users and view reports.</p>
-        <button onclick="viewUsers()">View All Users</button>
-        <button onclick="viewVotes()">View All Votes</button>
-        <div id="admin-output"></div>
-    </div>
+        <section id="admin-section" class="admin-section" style="display:none;">
+            <div class="section-heading compact">
+                <p class="eyebrow">Panel pentadbiran</p>
+                <h2>Jejaki pengguna dan undian</h2>
+                <p>Gunakan tindakan pantas di bawah untuk menghasilkan laporan.</p>
+            </div>
+            <div class="admin-actions">
+                <button class="btn secondary" onclick="viewUsers()">Lihat semua pengguna</button>
+                <button class="btn primary" onclick="viewVotes()">Lihat semua undian</button>
+            </div>
+            <div id="admin-output" class="admin-output"></div>
+        </section>
+    </main>
 
     <script>
     // Section navigation
@@ -265,6 +397,25 @@
     fetch('index.php?action=view_votes', { credentials: 'same-origin' })
             .then(res => res.text())
             .then(data => document.getElementById('admin-output').innerHTML = data);
+    }
+
+    // Simple mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+            navToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+            navLinks.classList.toggle('is-open');
+        });
+        navLinks.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (navLinks.classList.contains('is-open')) {
+                    navLinks.classList.remove('is-open');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
     }
     </script>
     <script src="script.js"></script>

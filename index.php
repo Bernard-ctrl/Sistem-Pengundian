@@ -24,6 +24,18 @@ $conn->query("CREATE TABLE IF NOT EXISTS PENGGUNA (
     is_admin TINYINT(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+// Migration: Add password column if it doesn't exist (for existing tables)
+$result = $conn->query("SHOW COLUMNS FROM PENGGUNA LIKE 'password'");
+if ($result && $result->num_rows == 0) {
+    $conn->query("ALTER TABLE PENGGUNA ADD COLUMN password VARCHAR(255) NOT NULL DEFAULT ''");
+}
+
+// Migration: Add is_admin column if it doesn't exist
+$result = $conn->query("SHOW COLUMNS FROM PENGGUNA LIKE 'is_admin'");
+if ($result && $result->num_rows == 0) {
+    $conn->query("ALTER TABLE PENGGUNA ADD COLUMN is_admin TINYINT(1) NOT NULL DEFAULT 0");
+}
+
 // Create JAWATAN table (Positions)
 $conn->query("CREATE TABLE IF NOT EXISTS JAWATAN (
     id_Jawatan VARCHAR(10) PRIMARY KEY,

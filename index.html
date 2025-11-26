@@ -154,10 +154,6 @@
                     <label for="position">Pilih jawatan</label>
                     <select name="position" id="position" required>
                         <option value="">-- Pilih Jawatan --</option>
-                        <option value="Pengerusi">Pengerusi</option>
-                        <option value="Naib Pengerusi">Naib Pengerusi</option>
-                        <option value="Setiausaha">Setiausaha</option>
-                        <option value="Bendahari">Bendahari</option>
                     </select>
                 </div>
                 <div class="form-control">
@@ -182,9 +178,11 @@
             </div>
             <form id="signupForm" class="auth-form">
                 <input type="hidden" name="action" value="signup">
-                <label for="signup_username">Username</label>
-                <input type="text" id="signup_username" name="username" required>
-                <label for="signup_password">Password</label>
+                <label for="signup_username">ID Pengguna</label>
+                <input type="text" id="signup_username" name="username" required placeholder="Contoh: D6261">
+                <label for="signup_nama">Nama Penuh</label>
+                <input type="text" id="signup_nama" name="nama" required placeholder="Contoh: Ali bin Ahmad">
+                <label for="signup_password">Kata Laluan</label>
                 <input type="password" id="signup_password" name="password" required>
                 <button type="submit" class="btn primary w-100">Daftar</button>
             </form>
@@ -199,9 +197,9 @@
             </div>
             <form id="signinForm" class="auth-form">
                 <input type="hidden" name="action" value="signin">
-                <label for="signin_username">Username</label>
-                <input type="text" id="signin_username" name="username" required>
-                <label for="signin_password">Password</label>
+                <label for="signin_username">ID Pengguna</label>
+                <input type="text" id="signin_username" name="username" required placeholder="Contoh: D6261">
+                <label for="signin_password">Kata Laluan</label>
                 <input type="password" id="signin_password" name="password" required>
                 <button type="submit" class="btn primary w-100">Log Masuk</button>
             </form>

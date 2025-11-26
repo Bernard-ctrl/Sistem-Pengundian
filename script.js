@@ -1,30 +1,56 @@
 document.addEventListener('DOMContentLoaded', function () {
     const voteForm = document.getElementById('voteForm');
-    if (!voteForm) return; // nothing to do if form not present
+    if (!voteForm) return;
 
-    // Candidate mapping per position (example names)
-    const candidates = {
-        'Pengerusi': ['Ali', 'Aminah', 'Farid'],
-        'Naib Pengerusi': ['Siti', 'Hassan'],
-        'Setiausaha': ['Lina', 'Zulkifli'],
-        'Bendahari': ['Hadi', 'Nurul']
-    };
+    // Fetch positions and candidates from server
+    let jawatanList = [];
+    let calonList = [];
+    
+    // Load jawatan (positions)
+    fetch('index.php?action=get_jawatan', { credentials: 'same-origin' })
+        .then(r => r.json())
+        .then(data => {
+            jawatanList = data;
+            populatePositions();
+        })
+        .catch(() => console.error('Failed to load jawatan'));
+    
+    // Load calon (candidates)
+    fetch('index.php?action=get_calon', { credentials: 'same-origin' })
+        .then(r => r.json())
+        .then(data => {
+            calonList = data;
+        })
+        .catch(() => console.error('Failed to load calon'));
+    
     const positionEl = document.getElementById('position');
     const studentEl = document.getElementById('student');
-    function populateCandidates(pos) {
+    
+    function populatePositions() {
+        if (!positionEl) return;
+        positionEl.innerHTML = '<option value="">-- Pilih Jawatan --</option>';
+        jawatanList.forEach(j => {
+            const opt = document.createElement('option');
+            opt.value = j.id_Jawatan;
+            opt.textContent = j.nama_Jawatan;
+            positionEl.appendChild(opt);
+        });
+    }
+    
+    function populateCandidates() {
         if (!studentEl) return;
         studentEl.innerHTML = '<option value="">-- Pilih Calon --</option>';
-        if (!pos || !candidates[pos]) return;
-        candidates[pos].forEach(name => {
+        calonList.forEach(c => {
             const opt = document.createElement('option');
-            opt.value = name;
-            opt.textContent = name;
+            opt.value = c.id_Calon;
+            opt.textContent = c.nama_Calon;
             studentEl.appendChild(opt);
         });
     }
+    
     if (positionEl) {
         positionEl.addEventListener('change', function() {
-            populateCandidates(positionEl.value);
+            populateCandidates();
         });
     }
 
@@ -32,7 +58,24 @@ document.addEventListener('DOMContentLoaded', function () {
     if (voteBtn) {
         voteBtn.addEventListener('click', function() {
             const form = voteForm;
-            const formData = new FormData(form);
+            const formData = new FormData();
+            
+            // Get selected values
+            const id_jawatan = positionEl ? positionEl.value : '';
+            const id_calon = studentEl ? studentEl.value : '';
+            
+            if (!id_jawatan || !id_calon) {
+                const resEl = document.getElementById('result');
+                if (resEl) {
+                    resEl.textContent = 'Sila pilih jawatan dan calon.';
+                    resEl.style.color = '#c0392b';
+                    resEl.style.fontWeight = '700';
+                }
+                return;
+            }
+            
+            formData.append('id_jawatan', id_jawatan);
+            formData.append('id_calon', id_calon);
 
             fetch('index.php', {
                 method: 'POST',
@@ -48,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     const lower = (data || '').toLowerCase();
                     const isSuccess = /undian untuk|telah direkodkan|jumlah undian/.test(lower);
                     resEl.style.color = isSuccess ? '#27ae60' : '#c0392b';
-                    // Make message more visible
                     resEl.style.fontWeight = '700';
                     resEl.style.marginTop = '12px';
                 }
@@ -67,7 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(r => r.json())
                     .then(json => {
                         try {
-                            // update global variable used by index.html
                             window.serverVotedPositions = Array.isArray(json) ? json : [];
                         } catch (e) {}
                         try { if (typeof updateVoteControls === 'function') updateVoteControls(); } catch (e) {}

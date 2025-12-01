@@ -90,24 +90,25 @@ foreach ($defaultCandidates as $cand) {
     $stmt->close();
 }
 
-// Ensure default admin user exists
+// Ensure default admin user exists (force username/password 'admin' for local testing)
 $defaultAdmin = 'admin';
 $defaultPassword = 'admin';
-$stmt = $conn->prepare("SELECT id_Pengguna FROM PENGGUNA WHERE id_Pengguna = ?");
-$stmt->bind_param("s", $defaultAdmin);
-$stmt->execute();
-$stmt->store_result();
-if ($stmt->num_rows === 0) {
-    $stmt->close();
-    $hash = password_hash($defaultPassword, PASSWORD_DEFAULT);
-    $ins = $conn->prepare("INSERT INTO PENGGUNA (id_Pengguna, nama, password, is_admin) VALUES (?, ?, ?, 1)");
-    $nama = 'Administrator';
-    $ins->bind_param("sss", $defaultAdmin, $nama, $hash);
-    $ins->execute();
-    $ins->close();
-} else {
-    $stmt->close();
-}
+$nama = 'Administrator';
+
+// Compute password hash for the desired admin password
+$hash = password_hash($defaultPassword, PASSWORD_DEFAULT);
+
+// Insert admin if missing (safe no-op if already exists)
+$ins = $conn->prepare("INSERT IGNORE INTO PENGGUNA (id_Pengguna, nama, password, is_admin) VALUES (?, ?, ?, 1)");
+$ins->bind_param("sss", $defaultAdmin, $nama, $hash);
+$ins->execute();
+$ins->close();
+
+// Force-reset admin password and admin flag to ensure credentials are exactly 'admin' for this project
+$upd = $conn->prepare("UPDATE PENGGUNA SET password = ?, is_admin = 1, nama = ? WHERE id_Pengguna = ?");
+$upd->bind_param("sss", $hash, $nama, $defaultAdmin);
+$upd->execute();
+$upd->close();
 
 
 session_start();

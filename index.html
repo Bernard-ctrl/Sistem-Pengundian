@@ -201,6 +201,7 @@
                 <p>Gunakan tindakan pantas di bawah untuk menghasilkan laporan dan mengurus sistem.</p>
             </div>
             <div class="admin-actions">
+                <input type="text" id="adminSearch" placeholder="Cari pengguna atau undian..." style="width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;">
                 <button class="btn secondary" onclick="viewUsers()">Lihat semua pengguna</button>
                 <button class="btn secondary" onclick="viewVotes()">Lihat semua undian</button>
                 <button class="btn secondary" onclick="showAddUserForm()">Tambah pengguna baru</button>
@@ -269,6 +270,8 @@
     } else {
         showSection('home');
     }
+
+    let currentAdminView = null;
 
     // Server-backed enforcement: fetch positions this user already voted for from PHP
     let serverVotedPositions = [];
@@ -417,17 +420,19 @@
     }
 
     // Admin AJAX functions
-    function viewUsers() {
+    function viewUsers(search = '') {
+        currentAdminView = 'users';
         document.getElementById('add-user-form').style.display = 'none';
         document.getElementById('admin-output').style.display = 'block';
-        fetch('index.php?action=view_users', { credentials: 'same-origin' })
+        fetch('index.php?action=view_users&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
             .then(res => res.text())
             .then(data => document.getElementById('admin-output').innerHTML = data);
     }
-    function viewVotes() {
+    function viewVotes(search = '') {
+        currentAdminView = 'votes';
         document.getElementById('add-user-form').style.display = 'none';
         document.getElementById('admin-output').style.display = 'block';
-        fetch('index.php?action=view_votes', { credentials: 'same-origin' })
+        fetch('index.php?action=view_votes&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
             .then(res => res.text())
             .then(data => document.getElementById('admin-output').innerHTML = data);
     }
@@ -458,6 +463,19 @@
                     viewUsers(); // Refresh the list
                 });
         }
+    }
+
+    // Search functionality
+    const adminSearch = document.getElementById('adminSearch');
+    if (adminSearch) {
+        adminSearch.addEventListener('input', function() {
+            const search = this.value;
+            if (currentAdminView === 'users') {
+                viewUsers(search);
+            } else if (currentAdminView === 'votes') {
+                viewVotes(search);
+            }
+        });
     }
 
     // Simple mobile nav toggle

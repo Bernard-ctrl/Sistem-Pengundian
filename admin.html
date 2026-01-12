@@ -16,6 +16,9 @@
         button.primary{width:100%;padding:10px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-weight:600;margin-top:16px}
         .note{font-size:13px;color:var(--muted);margin-top:12px;text-align:center}
         .msg{margin-top:12px;text-align:center;font-weight:700}
+        .msg.success{color:#27ae60}
+        .msg.error{color:#c0392b}
+        .msg.processing{color:#333}
         .small-link{display:block;margin-top:10px;text-align:center;color:var(--accent);text-decoration:none}
     </style>
 </head>
@@ -42,7 +45,9 @@
         const msg = document.getElementById('msg');
         form.addEventListener('submit', function(e){
             e.preventDefault();
-            msg.style.color = '#333'; // neutral default
+            // reset classes and show processing state
+            msg.classList.remove('success','error');
+            msg.classList.add('processing');
             msg.textContent = 'Memproses...';
             const fd = new FormData(form);
             fetch('index.php', { method: 'POST', credentials: 'same-origin', body: fd })
@@ -51,21 +56,23 @@
                     // Remove debug info from message
                     const cleanTxt = txt.replace(/ SESSION_ID=.*$/, '');
                     msg.textContent = cleanTxt;
-                    msg.style.color = '#333';  // reset to neutral before outcome
+                    // clear processing state
+                    msg.classList.remove('processing');
                     const lower = (cleanTxt||'').toLowerCase();
                     if (lower.includes('log masuk') && lower.includes('admin')) {
-                        msg.style.color = '#27ae60';  // green for success
+                        msg.classList.add('success');
                         localStorage.setItem('isLoggedIn','true');
                         localStorage.setItem('isAdmin','true');
                         // small delay for UX
                         setTimeout(() => window.location.href = 'index.html', 600);
                     } else {
-                        msg.style.color = '#c0392b';  // red for error
+                        msg.classList.add('error');
                     }
                 })
                 .catch(err => {
+                    msg.classList.remove('processing');
+                    msg.classList.add('error');
                     msg.textContent = 'Ralat rangkaian.';
-                    msg.style.color = '#c0392b';
                 });
         });
     </script>

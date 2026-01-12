@@ -376,13 +376,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         }
         $stmt->execute();
         $result = $stmt->get_result();
-        echo "<h3>Senarai Pengguna</h3><ul>";
+        echo "<h3>Senarai Pengguna</h3><table style='width:100%;border-collapse:collapse;'><thead><tr><th style='border:1px solid #ddd;padding:8px;text-align:left;'>ID Pengguna</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Nama</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Status</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Tindakan</th></tr></thead><tbody>";
         while ($row = $result->fetch_assoc()) {
-            $adminLabel = $row['is_admin'] ? " (Admin)" : "";
-            $deleteBtn = $row['id_Pengguna'] !== $_SESSION['id_pengguna'] ? " <button onclick=\"deleteUser('" . htmlspecialchars($row['id_Pengguna']) . "')\">Padam</button>" : "";
-            echo "<li>" . htmlspecialchars($row['id_Pengguna']) . " - " . htmlspecialchars($row['nama']) . $adminLabel . $deleteBtn . "</li>";
+            $adminLabel = $row['is_admin'] ? "Admin" : "Pengguna Biasa";
+            $deleteBtn = $row['id_Pengguna'] !== $_SESSION['id_pengguna'] ? "<button class=\"btn\" style=\"background:#e74c3c;color:#fff;border:0;padding:4px 8px;border-radius:4px;cursor:pointer;\" onclick=\"deleteUser('" . htmlspecialchars($row['id_Pengguna']) . "')\">Padam</button>" : "-";
+            echo "<tr><td style='border:1px solid #ddd;padding:8px;'>" . htmlspecialchars($row['id_Pengguna']) . "</td><td style='border:1px solid #ddd;padding:8px;'>" . htmlspecialchars($row['nama']) . "</td><td style='border:1px solid #ddd;padding:8px;'>" . $adminLabel . "</td><td style='border:1px solid #ddd;padding:8px;'>" . $deleteBtn . "</td></tr>";
         }
-        echo "</ul>";
+        echo "</tbody></table>";
         $stmt->close();
         $conn->close();
         exit;

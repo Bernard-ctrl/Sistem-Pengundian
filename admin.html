@@ -42,6 +42,7 @@
         const msg = document.getElementById('msg');
         form.addEventListener('submit', function(e){
             e.preventDefault();
+            msg.style.color = '#333'; // neutral default
             msg.textContent = 'Memproses...';
             const fd = new FormData(form);
             fetch('index.php', { method: 'POST', credentials: 'same-origin', body: fd })
@@ -50,6 +51,7 @@
                     // Remove debug info from message
                     const cleanTxt = txt.replace(/ SESSION_ID=.*$/, '');
                     msg.textContent = cleanTxt;
+                    msg.style.color = '#333';  // reset to neutral before outcome
                     const lower = (cleanTxt||'').toLowerCase();
                     if (lower.includes('log masuk') && lower.includes('admin')) {
                         msg.style.color = '#27ae60';  // green for success

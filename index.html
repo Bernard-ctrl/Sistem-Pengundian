@@ -198,13 +198,33 @@
             <div class="section-heading compact">
                 <p class="eyebrow">Panel pentadbiran</p>
                 <h2>Jejaki pengguna dan undian</h2>
-                <p>Gunakan tindakan pantas di bawah untuk menghasilkan laporan.</p>
+                <p>Gunakan tindakan pantas di bawah untuk menghasilkan laporan dan mengurus sistem.</p>
             </div>
             <div class="admin-actions">
                 <button class="btn secondary" onclick="viewUsers()">Lihat semua pengguna</button>
-                <button class="btn primary" onclick="viewVotes()">Lihat semua undian</button>
+                <button class="btn secondary" onclick="viewVotes()">Lihat semua undian</button>
+                <button class="btn secondary" onclick="showAddUserForm()">Tambah pengguna baru</button>
+                <button class="btn secondary" onclick="viewCandidates()">Lihat calon</button>
+                <button class="btn secondary" onclick="viewPositions()">Lihat jawatan</button>
             </div>
             <div id="admin-output" class="admin-output"></div>
+            <div id="add-user-form" style="display:none;">
+                <h3>Tambah Pengguna Baru</h3>
+                <form id="addUserForm" class="auth-form">
+                    <input type="hidden" name="action" value="add_user">
+                    <label for="add_username">ID Pengguna</label>
+                    <input type="text" id="add_username" name="username" required placeholder="Contoh: D6265">
+                    <label for="add_nama">Nama Penuh</label>
+                    <input type="text" id="add_nama" name="nama" required placeholder="Contoh: Siti">
+                    <label for="add_password">Kata Laluan</label>
+                    <input type="password" id="add_password" name="password" required>
+                    <label for="add_is_admin">
+                        <input type="checkbox" id="add_is_admin" name="is_admin" value="1"> Admin
+                    </label>
+                    <button type="submit" class="btn primary w-100">Tambah Pengguna</button>
+                </form>
+                <div id="add-user-result" class="form-result"></div>
+            </div>
         </section>
     </main>
 
@@ -230,11 +250,25 @@
         document.getElementById('signupNavBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('signinNavBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('logoutNavBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+        document.getElementById('homeNavBtn').style.display = isAdmin ? 'none' : 'inline-block';
         
         // Refresh vote controls (disable if already voted client-side)
         try { updateVoteControls(); } catch (e) { /* ignore if helper not yet defined */ }
     }
     updateVoteVisibility();
+
+    // On page load, show appropriate section based on login status
+    const isAdminOnLoad = localStorage.getItem('isAdmin') === 'true';
+    const isLoggedInOnLoad = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedInOnLoad) {
+        if (isAdminOnLoad) {
+            showSection('admin');
+        } else {
+            showSection('vote');
+        }
+    } else {
+        showSection('home');
+    }
 
     // Server-backed enforcement: fetch positions this user already voted for from PHP
     let serverVotedPositions = [];
@@ -339,8 +373,8 @@
                         localStorage.setItem('isAdmin', 'true');
                     }
                     updateVoteVisibility();
-                    // Auto-direct to vote page for users, home for admin
-                    showSection(isAdmin ? 'home' : 'vote');
+                    // Auto-direct to vote page for users, admin panel for admin
+                    showSection(isAdmin ? 'admin' : 'vote');
                     setTimeout(() => {
                         if (el) el.textContent = '';
                         form.reset();
@@ -354,16 +388,76 @@
         });
     }
 
+    // Add User AJAX
+    const addUserFormEl = document.getElementById('addUserForm');
+    if (addUserFormEl) {
+        addUserFormEl.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            fetch('index.php', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                const out = document.getElementById('add-user-result');
+                if (out) out.textContent = data;
+                if (data.includes('berjaya')) {
+                    if (out) out.style.color = '#27ae60';
+                    form.reset();
+                    document.getElementById('add-user-form').style.display = 'none';
+                    viewUsers(); // Refresh user list
+                } else {
+                    if (out) out.style.color = '#c0392b';
+                }
+            });
+        });
+    }
+
     // Admin AJAX functions
     function viewUsers() {
-    fetch('index.php?action=view_users', { credentials: 'same-origin' })
+        document.getElementById('add-user-form').style.display = 'none';
+        document.getElementById('admin-output').style.display = 'block';
+        fetch('index.php?action=view_users', { credentials: 'same-origin' })
             .then(res => res.text())
             .then(data => document.getElementById('admin-output').innerHTML = data);
     }
     function viewVotes() {
-    fetch('index.php?action=view_votes', { credentials: 'same-origin' })
+        document.getElementById('add-user-form').style.display = 'none';
+        document.getElementById('admin-output').style.display = 'block';
+        fetch('index.php?action=view_votes', { credentials: 'same-origin' })
             .then(res => res.text())
             .then(data => document.getElementById('admin-output').innerHTML = data);
+    }
+    function showAddUserForm() {
+        document.getElementById('admin-output').style.display = 'none';
+        document.getElementById('add-user-form').style.display = 'block';
+    }
+    function viewCandidates() {
+        document.getElementById('add-user-form').style.display = 'none';
+        document.getElementById('admin-output').style.display = 'block';
+        fetch('index.php?action=view_candidates', { credentials: 'same-origin' })
+            .then(res => res.text())
+            .then(data => document.getElementById('admin-output').innerHTML = data);
+    }
+    function viewPositions() {
+        document.getElementById('add-user-form').style.display = 'none';
+        document.getElementById('admin-output').style.display = 'block';
+        fetch('index.php?action=view_positions', { credentials: 'same-origin' })
+            .then(res => res.text())
+            .then(data => document.getElementById('admin-output').innerHTML = data);
+    }
+    function deleteUser(userId) {
+        if (confirm('Adakah anda pasti mahu padam pengguna ' + userId + '?')) {
+            fetch('index.php?action=delete_user&user_id=' + encodeURIComponent(userId), { credentials: 'same-origin' })
+                .then(res => res.text())
+                .then(data => {
+                    alert(data);
+                    viewUsers(); // Refresh the list
+                });
+        }
     }
 
     // Simple mobile nav toggle

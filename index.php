@@ -362,7 +362,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
     }
     
     if ($_GET['action'] === 'view_users') {
-        $result = $conn->query("SELECT id_Pengguna, nama, is_admin FROM PENGGUNA ORDER BY id_Pengguna");
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $query = "SELECT id_Pengguna, nama, is_admin FROM PENGGUNA";
+        $params = [];
+        if ($search) {
+            $query .= " WHERE id_Pengguna LIKE ? OR nama LIKE ?";
+            $params = ["%$search%", "%$search%"];
+        }
+        $query .= " ORDER BY id_Pengguna";
+        $stmt = $conn->prepare($query);
+        if ($params) {
+            $stmt->bind_param(str_repeat('s', count($params)), ...$params);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
         echo "<h3>Senarai Pengguna</h3><ul>";
         while ($row = $result->fetch_assoc()) {
             $adminLabel = $row['is_admin'] ? " (Admin)" : "";
@@ -370,22 +383,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
             echo "<li>" . htmlspecialchars($row['id_Pengguna']) . " - " . htmlspecialchars($row['nama']) . $adminLabel . $deleteBtn . "</li>";
         }
         echo "</ul>";
+        $stmt->close();
         $conn->close();
         exit;
     }
     
     if ($_GET['action'] === 'view_votes') {
-        $result = $conn->query("
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $query = "
             SELECT 
                 j.nama_Jawatan,
                 c.nama_Calon,
                 COUNT(*) AS jumlah_undian
             FROM UNDIAN u
             JOIN CALON c ON u.id_Calon = c.id_Calon
-            JOIN JAWATAN j ON u.id_Jawatan = j.id_Jawatan
-            GROUP BY j.nama_Jawatan, c.nama_Calon
-            ORDER BY j.nama_Jawatan, jumlah_undian DESC
-        ");
+            JOIN JAWATAN j ON u.id_Jawatan = j.id_Jawatan";
+        $params = [];
+        if ($search) {
+            $query .= " WHERE j.nama_Jawatan LIKE ? OR c.nama_Calon LIKE ?";
+            $params = ["%$search%", "%$search%"];
+        }
+        $query .= " GROUP BY j.nama_Jawatan, c.nama_Calon
+            ORDER BY j.nama_Jawatan, jumlah_undian DESC";
+        $stmt = $conn->prepare($query);
+        if ($params) {
+            $stmt->bind_param(str_repeat('s', count($params)), ...$params);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
         echo "<h3>Senarai Undian</h3>";
         $currentPos = null;
         echo "<div>";
@@ -399,6 +424,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         }
         if ($currentPos !== null) echo "</ul>";
         echo "</div>";
+        $stmt->close();
         $conn->close();
         exit;
     }

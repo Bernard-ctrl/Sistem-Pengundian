@@ -157,9 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['id_pengguna'] = $id_pengguna;
             $_SESSION['nama'] = $nama;
             $_SESSION['is_admin'] = $is_admin;
-            $sid = session_id();
-            $cookie = isset($_COOKIE[session_name()]) ? $_COOKIE[session_name()] : '(none)';
-            echo ($is_admin ? "Log masuk sebagai admin." : "Log masuk berjaya.") . " SESSION_ID=" . $sid . " COOKIE=" . $cookie;
+            echo $is_admin ? "Log masuk sebagai admin." : "Log masuk berjaya.";
         } else {
             echo "Log masuk gagal. Sila semak ID pengguna dan kata laluan.";
         }
@@ -266,6 +264,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
+    
+    // Add user (admin only)
+    if (isset($_POST['action']) && $_POST['action'] === 'add_user') {
+        if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+            echo "Akses ditolak.";
+            $conn->close();
+            exit;
+        }
+        $id_pengguna = $_POST['username'];
+        $nama = $_POST['nama'];
+        $password = $_POST['password'];
+        $is_admin = isset($_POST['is_admin']) ? 1 : 0;
+        
+        // Check if user exists
+        $stmt = $conn->prepare("SELECT id_Pengguna FROM PENGGUNA WHERE id_Pengguna = ?");
+        $stmt->bind_param("s", $id_pengguna);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            echo "ID Pengguna sudah wujud.";
+            $stmt->close();
+            $conn->close();
+            exit;
+        }
+        $stmt->close();
+        
+        // Insert new user
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("INSERT INTO PENGGUNA (id_Pengguna, nama, password, is_admin) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sssi", $id_pengguna, $nama, $hash, $is_admin);
+        $stmt->execute();
+        $stmt->close();
+        echo "Pengguna berjaya ditambah.";
+        $conn->close();
+        exit;
+    }
 }
 
 // Admin endpoints (GET)
@@ -331,7 +365,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         $result = $conn->query("SELECT id_Pengguna, nama, is_admin FROM PENGGUNA ORDER BY id_Pengguna");
         echo "<h3>Senarai Pengguna</h3><ul>";
         while ($row = $result->fetch_assoc()) {
-            echo "<li>" . htmlspecialchars($row['id_Pengguna']) . " - " . htmlspecialchars($row['nama']) . ($row['is_admin'] ? " (Admin)" : "") . "</li>";
+            $adminLabel = $row['is_admin'] ? " (Admin)" : "";
+            $deleteBtn = $row['id_Pengguna'] !== $_SESSION['id_pengguna'] ? " <button onclick=\"deleteUser('" . htmlspecialchars($row['id_Pengguna']) . "')\">Padam</button>" : "";
+            echo "<li>" . htmlspecialchars($row['id_Pengguna']) . " - " . htmlspecialchars($row['nama']) . $adminLabel . $deleteBtn . "</li>";
         }
         echo "</ul>";
         $conn->close();
@@ -363,6 +399,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         }
         if ($currentPos !== null) echo "</ul>";
         echo "</div>";
+        $conn->close();
+        exit;
+    }
+    
+    if ($_GET['action'] === 'delete_user') {
+        $user_id = $_GET['user_id'];
+        // Prevent deleting self
+        if ($user_id === $_SESSION['id_pengguna']) {
+            echo "Anda tidak boleh padam akaun sendiri.";
+            $conn->close();
+            exit;
+        }
+        $stmt = $conn->prepare("DELETE FROM PENGGUNA WHERE id_Pengguna = ?");
+        $stmt->bind_param("s", $user_id);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            echo "Pengguna berjaya dipadam.";
+        } else {
+            echo "Pengguna tidak dijumpai.";
+        }
+        $stmt->close();
+        $conn->close();
+        exit;
+    }
+    
+    if ($_GET['action'] === 'view_candidates') {
+        $result = $conn->query("SELECT id_Calon, nama_Calon FROM CALON ORDER BY id_Calon");
+        echo "<h3>Senarai Calon</h3><ul>";
+        while ($row = $result->fetch_assoc()) {
+            echo "<li>" . htmlspecialchars($row['id_Calon']) . " - " . htmlspecialchars($row['nama_Calon']) . "</li>";
+        }
+        echo "</ul>";
+        $conn->close();
+        exit;
+    }
+    
+    if ($_GET['action'] === 'view_positions') {
+        $result = $conn->query("SELECT id_Jawatan, nama_Jawatan FROM JAWATAN ORDER BY id_Jawatan");
+        echo "<h3>Senarai Jawatan</h3><ul>";
+        while ($row = $result->fetch_assoc()) {
+            echo "<li>" . htmlspecialchars($row['id_Jawatan']) . " - " . htmlspecialchars($row['nama_Jawatan']) . "</li>";
+        }
+        echo "</ul>";
         $conn->close();
         exit;
     }

@@ -239,7 +239,7 @@
         document.getElementById('admin-section').style.display = (section === 'admin') ? 'block' : 'none';
     }
 
-    // Show admin nav if user is admin (demo, real check is server-side)
+    // Show admin nav if user is admin
     function updateVoteVisibility() {
         const isAdmin = localStorage.getItem('isAdmin') === 'true';
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';

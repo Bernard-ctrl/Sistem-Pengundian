@@ -1,5 +1,4 @@
 <?php
-// index.php - Updated to use PENGGUNA, CALON, JAWATAN, UNDIAN schema
 
 $host = 'localhost';
 $db = 'pengundian';

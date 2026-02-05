@@ -84,17 +84,21 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => response.text())
             .then(data => {
-                const resEl = document.getElementById('result');
-                const voteBtn = document.getElementById('voteSubmit');
-                if (resEl) {
-                    resEl.textContent = data;
-                    const lower = (data || '').toLowerCase();
-                    const isSuccess = /undian untuk|telah direkodkan|jumlah undian/.test(lower);
-                    resEl.style.color = isSuccess ? '#27ae60' : '#c0392b';
-                    resEl.style.fontWeight = '700';
-                    resEl.style.marginTop = '12px';
+                const lower = (data || '').toLowerCase();
+                const isSuccess = /undian untuk|telah direkodkan|jumlah undian/.test(lower);
+                if (isSuccess) {
+                    alert(data);
+                } else {
+                    const resEl = document.getElementById('result');
+                    if (resEl) {
+                        resEl.textContent = data;
+                        resEl.style.color = '#c0392b';
+                        resEl.style.fontWeight = '700';
+                        resEl.style.marginTop = '12px';
+                    }
                 }
                 // Disable button briefly to avoid accidental duplicate votes
+                const voteBtn = document.getElementById('voteSubmit');
                 if (voteBtn) {
                     voteBtn.disabled = true;
                     voteBtn.textContent = 'Terima kasih';

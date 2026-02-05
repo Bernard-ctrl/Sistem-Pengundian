@@ -336,13 +336,15 @@
             })
             .then(response => response.text())
             .then(data => {
-                const out = document.getElementById('signup-result');
-                if (out) out.textContent = data;
                 if (data.includes('Pendaftaran berjaya')) {
-                    if (out) out.style.color = '#27ae60';
+                    alert(data);
                     form.reset();
                 } else {
-                    if (out) out.style.color = '#c0392b';
+                    const out = document.getElementById('signup-result');
+                    if (out) {
+                        out.textContent = data;
+                        out.style.color = '#c0392b';
+                    }
                 }
             });
         });
@@ -362,14 +364,12 @@
             })
             .then(response => response.text())
             .then(data => {
-                const el = document.getElementById('signin-result');
-                if (el) el.textContent = data;
                 const lower = (data || '').toLowerCase();
                 // If server returns words like 'gagal', 'salah', or 'tidak', treat as failure
                 const isFailure = /gagal|salah|tidak/.test(lower);
                 const isSuccess = !isFailure && lower.includes('log masuk');
                 if (isSuccess) {
-                    if (el) el.style.color = '#27ae60';
+                    alert(data);
                     localStorage.setItem('isLoggedIn', 'true');
                     const isAdmin = lower.includes('admin');
                     if (isAdmin) {
@@ -378,12 +378,13 @@
                     updateVoteVisibility();
                     // Auto-direct to vote page for users, admin panel for admin
                     showSection(isAdmin ? 'admin' : 'vote');
-                    setTimeout(() => {
-                        if (el) el.textContent = '';
-                        form.reset();
-                    }, 1200);
+                    form.reset();
                 } else {
-                    if (el) el.style.color = '#c0392b';
+                    const el = document.getElementById('signin-result');
+                    if (el) {
+                        el.textContent = data;
+                        el.style.color = '#c0392b';
+                    }
                     // Keep sign-in section visible so error message stays
                     showSection('signin');
                 }
@@ -405,15 +406,17 @@
             })
             .then(response => response.text())
             .then(data => {
-                const out = document.getElementById('add-user-result');
-                if (out) out.textContent = data;
                 if (data.includes('berjaya')) {
-                    if (out) out.style.color = '#27ae60';
+                    alert(data);
                     form.reset();
                     document.getElementById('add-user-form').style.display = 'none';
                     viewUsers(); // Refresh user list
                 } else {
-                    if (out) out.style.color = '#c0392b';
+                    const out = document.getElementById('add-user-result');
+                    if (out) {
+                        out.textContent = data;
+                        out.style.color = '#c0392b';
+                    }
                 }
             });
         });

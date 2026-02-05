@@ -448,4 +448,24 @@ select:focus {
     .admin-section {
         padding: 1.5rem;
     }
+
+    /* Table styles */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+    .data-table th,
+    .data-table td {
+        border: 1px solid var(--border);
+        padding: 0.75rem;
+        text-align: left;
+    }
+    .data-table th {
+        background: var(--card);
+        font-weight: 600;
+    }
+    .data-table tbody tr:nth-child(even) {
+        background: var(--background);
+    }
 }

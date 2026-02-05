@@ -126,6 +126,8 @@
             </section>
         </div>
 
+        </div>
+
         <!-- Voting Section (separate page) -->
         <div id="vote-section" class="vote-section" style="display:none;">
         <section class="panel vote-panel">
@@ -155,6 +157,26 @@
                 </div>
             </form>
             <div id="result" class="form-result"></div>
+        </section>
+        </div>
+
+        <!-- Result Section (Langkah 3) -->
+        <div id="result-section" class="result-section" style="display:none;">
+        <section class="panel result-panel">
+            <div class="panel-header">
+                <div>
+                    <p class="eyebrow">Undian selesai</p>
+                    <h2>Ringkasan Undian Anda</h2>
+                    <p>Terima kasih kerana mengundi. Berikut adalah maklumat undian anda.</p>
+                </div>
+                <span class="badge neutral">Langkah 3</span>
+            </div>
+            <div id="result-list" class="result-list">
+                <!-- Voted information will be loaded here -->
+            </div>
+            <div class="form-action">
+                <button class="btn primary" onclick="exportVotes()">Eksport Maklumat Undian</button>
+            </div>
         </section>
         </div>
 
@@ -234,6 +256,7 @@
     function showSection(section) {
         document.getElementById('home-section').style.display = (section === 'home') ? 'block' : 'none';
         document.getElementById('vote-section').style.display = (section === 'vote') ? 'block' : 'none';
+        document.getElementById('result-section').style.display = (section === 'result') ? 'block' : 'none';
         document.getElementById('signup-section').style.display = (section === 'signup') ? 'block' : 'none';
         document.getElementById('signin-section').style.display = (section === 'signin') ? 'block' : 'none';
         document.getElementById('admin-section').style.display = (section === 'admin') ? 'block' : 'none';
@@ -258,6 +281,28 @@
     }
     updateVoteVisibility();
 
+    function renderVotedInfo(votes) {
+        const resultListEl = document.getElementById('result-list');
+        if (!resultListEl) return;
+        resultListEl.innerHTML = '';
+        if (!Array.isArray(votes) || votes.length === 0) {
+            resultListEl.innerHTML = '<p>Anda belum mengundi untuk sebarang jawatan.</p>';
+            return;
+        }
+        const ul = document.createElement('ul');
+        votes.forEach(vote => {
+            const li = document.createElement('li');
+            li.textContent = `Jawatan: ${vote.nama_Jawatan} - Calon: ${vote.nama_Calon}`;
+            ul.appendChild(li);
+        });
+        resultListEl.appendChild(ul);
+    }
+
+    function exportVotes() {
+        // Simple export: print the page
+        window.print();
+    }
+
     // On page load, show appropriate section based on login status
     const isAdminOnLoad = localStorage.getItem('isAdmin') === 'true';
     const isLoggedInOnLoad = localStorage.getItem('isLoggedIn') === 'true';
@@ -281,7 +326,7 @@
             const res = await fetch('index.php?action=my_votes', { credentials: 'same-origin' });
             if (!res.ok) return;
             const json = await res.json();
-            if (Array.isArray(json)) serverVotedPositions = json;
+            if (Array.isArray(json)) serverVotedPositions = json.map(v => v.id_Jawatan);
         } catch (e) { /* ignore */ }
         updateVoteControls();
     }

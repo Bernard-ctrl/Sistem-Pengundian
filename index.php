@@ -338,16 +338,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
             exit;
         }
         $id_pengguna = $_SESSION['id_pengguna'];
-        $stmt = $conn->prepare("SELECT id_Jawatan FROM UNDIAN WHERE id_Pengguna = ?");
+        $stmt = $conn->prepare("SELECT u.id_Jawatan, j.nama_Jawatan, u.id_Calon, c.nama_Calon FROM UNDIAN u JOIN JAWATAN j ON u.id_Jawatan = j.id_Jawatan JOIN CALON c ON u.id_Calon = c.id_Calon WHERE u.id_Pengguna = ?");
         $stmt->bind_param("s", $id_pengguna);
         $stmt->execute();
         $res = $stmt->get_result();
-        $jawatan = [];
+        $votes = [];
         while ($row = $res->fetch_assoc()) {
-            $jawatan[] = $row['id_Jawatan'];
+            $votes[] = $row;
         }
         header('Content-Type: application/json');
-        echo json_encode($jawatan);
+        echo json_encode($votes);
         $stmt->close();
         $conn->close();
         exit;

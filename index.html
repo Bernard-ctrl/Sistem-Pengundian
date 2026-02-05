@@ -223,7 +223,6 @@
                 <p>Gunakan tindakan pantas di bawah untuk menghasilkan laporan dan mengurus sistem.</p>
             </div>
             <div class="admin-actions">
-                <input type="text" id="adminSearch" placeholder="Cari pengguna atau undian..." style="width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;">
                 <button class="btn secondary" onclick="viewUsers()">Lihat semua pengguna</button>
                 <button class="btn secondary" onclick="viewVotes()">Lihat semua undian</button>
                 <button class="btn secondary" onclick="showAddUserForm()">Tambah pengguna baru</button>
@@ -513,17 +512,30 @@
         }
     }
 
-    // Search functionality
-    const adminSearch = document.getElementById('adminSearch');
-    if (adminSearch) {
-        adminSearch.addEventListener('input', function() {
-            const search = this.value;
-            if (currentAdminView === 'users') {
-                viewUsers(search);
-            } else if (currentAdminView === 'votes') {
-                viewVotes(search);
-            }
-        });
+    // Search functionality removed, now per section
+    function searchUsers(search) {
+        currentAdminView = 'users';
+        fetch('index.php?action=view_users&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
+            .then(res => res.text())
+            .then(data => document.getElementById('admin-output').innerHTML = data);
+    }
+    function searchCandidates(search) {
+        currentAdminView = 'candidates';
+        fetch('index.php?action=view_candidates&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
+            .then(res => res.text())
+            .then(data => document.getElementById('admin-output').innerHTML = data);
+    }
+    function searchPositions(search) {
+        currentAdminView = 'positions';
+        fetch('index.php?action=view_positions&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
+            .then(res => res.text())
+            .then(data => document.getElementById('admin-output').innerHTML = data);
+    }
+    function searchVotes(search) {
+        currentAdminView = 'votes';
+        fetch('index.php?action=view_votes&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
+            .then(res => res.text())
+            .then(data => document.getElementById('admin-output').innerHTML = data);
     }
 
     // Simple mobile nav toggle

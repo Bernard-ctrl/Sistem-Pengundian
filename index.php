@@ -375,7 +375,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         }
         $stmt->execute();
         $result = $stmt->get_result();
-        echo "<h3>Senarai Pengguna</h3><table style='width:100%;border-collapse:collapse;'><thead><tr><th style='border:1px solid #ddd;padding:8px;text-align:left;'>ID Pengguna</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Nama</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Status</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Tindakan</th></tr></thead><tbody>";
+        echo "<h3>Senarai Pengguna</h3>";
+        echo "<input type='text' id='userSearch' placeholder='Cari pengguna...' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchUsers(this.value)'>";
+        echo "<table style='width:100%;border-collapse:collapse;'><thead><tr><th style='border:1px solid #ddd;padding:8px;text-align:left;'>ID Pengguna</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Nama</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Status</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Tindakan</th></tr></thead><tbody>";
         while ($row = $result->fetch_assoc()) {
             $adminLabel = $row['is_admin'] ? "Admin" : "Pengguna Biasa";
             $deleteBtn = $row['id_Pengguna'] !== $_SESSION['id_pengguna'] ? "<button class=\"btn\" style=\"background:#e74c3c;color:#fff;border:0;padding:4px 8px;border-radius:4px;cursor:pointer;\" onclick=\"deleteUser('" . htmlspecialchars($row['id_Pengguna']) . "')\">Padam</button>" : "-";
@@ -411,6 +413,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         $stmt->execute();
         $result = $stmt->get_result();
         echo "<h3>Senarai Undian</h3>";
+        echo "<input type='text' id='voteSearch' placeholder='Cari undian...' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchVotes(this.value)'>";
         $currentPos = null;
         echo "<div>";
         while ($row = $result->fetch_assoc()) {
@@ -450,23 +453,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
     }
     
     if ($_GET['action'] === 'view_candidates') {
-        $result = $conn->query("SELECT id_Calon, nama_Calon FROM CALON ORDER BY id_Calon");
-        echo "<h3>Senarai Calon</h3><ul>";
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $query = "SELECT id_Calon, nama_Calon FROM CALON";
+        $params = [];
+        if ($search) {
+            $query .= " WHERE id_Calon LIKE ? OR nama_Calon LIKE ?";
+            $params = ["%$search%", "%$search%"];
+        }
+        $query .= " ORDER BY id_Calon";
+        $stmt = $conn->prepare($query);
+        if ($params) {
+            $stmt->bind_param(str_repeat('s', count($params)), ...$params);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        echo "<h3>Senarai Calon</h3>";
+        echo "<input type='text' id='candidateSearch' placeholder='Cari calon...' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchCandidates(this.value)'>";
+        echo "<ul>";
         while ($row = $result->fetch_assoc()) {
             echo "<li>" . htmlspecialchars($row['id_Calon']) . " - " . htmlspecialchars($row['nama_Calon']) . "</li>";
         }
         echo "</ul>";
+        $stmt->close();
         $conn->close();
         exit;
     }
     
     if ($_GET['action'] === 'view_positions') {
-        $result = $conn->query("SELECT id_Jawatan, nama_Jawatan FROM JAWATAN ORDER BY id_Jawatan");
-        echo "<h3>Senarai Jawatan</h3><ul>";
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $query = "SELECT id_Jawatan, nama_Jawatan FROM JAWATAN";
+        $params = [];
+        if ($search) {
+            $query .= " WHERE id_Jawatan LIKE ? OR nama_Jawatan LIKE ?";
+            $params = ["%$search%", "%$search%"];
+        }
+        $query .= " ORDER BY id_Jawatan";
+        $stmt = $conn->prepare($query);
+        if ($params) {
+            $stmt->bind_param(str_repeat('s', count($params)), ...$params);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        echo "<h3>Senarai Jawatan</h3>";
+        echo "<input type='text' id='positionSearch' placeholder='Cari jawatan...' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchPositions(this.value)'>";
+        echo "<ul>";
         while ($row = $result->fetch_assoc()) {
             echo "<li>" . htmlspecialchars($row['id_Jawatan']) . " - " . htmlspecialchars($row['nama_Jawatan']) . "</li>";
         }
         echo "</ul>";
+        $stmt->close();
         $conn->close();
         exit;
     }

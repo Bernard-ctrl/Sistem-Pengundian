@@ -87,7 +87,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 const lower = (data || '').toLowerCase();
                 const isSuccess = /undian untuk|telah direkodkan|jumlah undian/.test(lower);
                 if (isSuccess) {
-                    alert(data);
+                    // alert(data);
+                    // Instead of alert, show result page
+                    // Load and display voted info
+                    fetch('index.php?action=my_votes', { credentials: 'same-origin' })
+                        .then(r => r.json())
+                        .then(json => {
+                            window.serverVotedPositions = Array.isArray(json) ? json.map(v => v.id_Jawatan) : [];
+                            if (window.serverVotedPositions.length === jawatanList.length) {
+                                renderVotedInfo(json);
+                                showSection('result');
+                            } else {
+                                alert('Anda perlu mengundi untuk semua jawatan. Sila pilih jawatan lain.');
+                            }
+                        })
+                        .catch(() => {
+                            alert('Undian berjaya, tetapi gagal memuatkan maklumat.');
+                        });
                 } else {
                     const resEl = document.getElementById('result');
                     if (resEl) {
@@ -113,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(r => r.json())
                     .then(json => {
                         try {
-                            window.serverVotedPositions = Array.isArray(json) ? json : [];
+                            window.serverVotedPositions = Array.isArray(json) ? json.map(v => v.id_Jawatan) : [];
                         } catch (e) {}
                         try { if (typeof updateVoteControls === 'function') updateVoteControls(); } catch (e) {}
                     })

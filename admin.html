@@ -55,7 +55,6 @@
                 .then(txt => {
                     // Remove debug info from message
                     const cleanTxt = txt.replace(/ SESSION_ID=.*$/, '');
-                    msg.textContent = cleanTxt;
                     // clear processing state
                     msg.classList.remove('processing');
                     const lower = (cleanTxt||'').toLowerCase();
@@ -63,10 +62,13 @@
                         msg.classList.add('success');
                         localStorage.setItem('isLoggedIn','true');
                         localStorage.setItem('isAdmin','true');
+                        // Show success message in popup
+                        alert(cleanTxt);
                         // small delay for UX
                         setTimeout(() => window.location.href = 'index.html', 600);
                     } else {
                         msg.classList.add('error');
+                        msg.textContent = cleanTxt;
                     }
                 })
                 .catch(err => {

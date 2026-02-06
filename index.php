@@ -119,6 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nama = $_POST['nama'] ?? $_POST['username']; // Get name from form
         $password = $_POST['password'];
         $is_admin = 0; // Regular users are not admin by default
+        // Validate username: one alphabet followed by 4 digits, only alphanumeric, no symbols
+        if (!preg_match('/^[A-Za-z][0-9]{4}$/', $id_pengguna)) {
+            echo "ID Pengguna tidak sah. Format mesti: satu huruf diikuti 4 nombor (contoh: D6261).";
+            $conn->close();
+            exit;
+        }
         
         // Check if user exists
         $stmt = $conn->prepare("SELECT id_Pengguna FROM PENGGUNA WHERE id_Pengguna = ?");
@@ -275,6 +281,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nama = $_POST['nama'];
         $password = $_POST['password'];
         $is_admin = isset($_POST['is_admin']) ? 1 : 0;
+        // Validate username: one alphabet followed by 4 digits, only alphanumeric, no symbols
+        if (!preg_match('/^[A-Za-z][0-9]{4}$/', $id_pengguna)) {
+            echo "ID Pengguna tidak sah. Format mesti: satu huruf diikuti 4 nombor (contoh: D6261).";
+            $conn->close();
+            exit;
+        }
         
         // Check if user exists
         $stmt = $conn->prepare("SELECT id_Pengguna FROM PENGGUNA WHERE id_Pengguna = ?");

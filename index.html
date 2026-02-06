@@ -223,13 +223,28 @@
                 <p>Gunakan tindakan pantas di bawah untuk menghasilkan laporan dan mengurus sistem.</p>
             </div>
             <div class="admin-actions">
-                <button class="btn secondary" onclick="viewUsers()">Lihat semua pengguna</button>
-                <button class="btn secondary" onclick="viewVotes()">Lihat semua undian</button>
-                <button class="btn secondary" onclick="showAddUserForm()">Tambah pengguna baru</button>
-                <button class="btn secondary" onclick="viewCandidates()">Lihat calon</button>
-                <button class="btn secondary" onclick="viewPositions()">Lihat jawatan</button>
+                <div class="admin-action-group">
+                    <button class="btn secondary" onclick="viewUsers()">Lihat semua pengguna</button>
+                    <button class="btn secondary" onclick="showAddUserForm()">Tambah pengguna baru</button>
+                </div>
+                <div class="admin-action-group">
+                    <button class="btn secondary" onclick="viewVotes()">Lihat semua undian</button>
+                </div>
+                <div class="admin-action-group">
+                    <button class="btn secondary" onclick="viewCandidates()">Lihat calon</button>
+                </div>
+                <div class="admin-action-group">
+                    <button class="btn secondary" onclick="viewPositions()">Lihat jawatan</button>
+                </div>
             </div>
             <div id="admin-output" class="admin-output"></div>
+            <div id="admin-import-hidden" style="display:none;">
+                <input type="file" id="import-users" accept=".csv">
+                <input type="file" id="import-votes" accept=".csv">
+                <input type="file" id="import-candidates" accept=".csv">
+                <input type="file" id="import-positions" accept=".csv">
+                <input type="file" id="import-all" accept=".zip">
+            </div>
             <div id="add-user-form" style="display:none;">
                 <h3>Tambah Pengguna Baru</h3>
                 <form id="addUserForm" class="auth-form">
@@ -561,6 +576,34 @@
         }
     }
 
+    function exportCsv(type) {
+        window.location.href = 'index.php?action=export_' + encodeURIComponent(type);
+    }
+
+    function exportAll() {
+        window.location.href = 'index.php?action=export_all';
+    }
+
+    function triggerImport(type) {
+        const input = document.getElementById('import-' + type);
+        if (input) input.click();
+    }
+
+    function handleImport(type, file) {
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('action', 'import_' + type);
+        formData.append('file', file);
+        fetch('index.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+        })
+        .then(res => res.text())
+        .then(msg => alert(msg))
+        .catch(() => alert('Ralat semasa import.'));
+    }
+
     // Search functionality removed, now per section
     function searchUsers(search) {
         currentAdminView = 'users';
@@ -636,6 +679,16 @@
     const debouncedSearchVotes = debounce(searchVotes, 300);
     const debouncedSearchCandidates = debounce(searchCandidates, 300);
     const debouncedSearchPositions = debounce(searchPositions, 300);
+
+    ['users', 'votes', 'candidates', 'positions', 'all'].forEach(type => {
+        const input = document.getElementById('import-' + type);
+        if (!input) return;
+        input.addEventListener('change', () => {
+            const file = input.files && input.files[0];
+            handleImport(type, file);
+            input.value = '';
+        });
+    });
 
     // Simple mobile nav toggle
     const navToggle = document.getElementById('navToggle');

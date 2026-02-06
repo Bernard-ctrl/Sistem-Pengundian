@@ -372,6 +372,19 @@
         signupFormEl.addEventListener('submit', function(e) {
             e.preventDefault();
             const form = e.target;
+            // Client-side validation: username must be one letter followed by 4 digits
+            const username = (form.querySelector('[name="username"]') || {}).value || '';
+            const usernamePattern = /^[A-Za-z][0-9]{4}$/;
+            const signupOut = document.getElementById('signup-result');
+            if (!usernamePattern.test(username.trim())) {
+                if (signupOut) {
+                    signupOut.textContent = 'ID tidak sah. Gunakan satu huruf diikuti 4 nombor (contoh: D6261).';
+                    signupOut.style.color = '#c0392b';
+                } else {
+                    alert('ID tidak sah. Gunakan satu huruf diikuti 4 nombor (contoh: D6261).');
+                }
+                return;
+            }
             const formData = new FormData(form);
             fetch('index.php', {
                 method: 'POST',
@@ -383,6 +396,15 @@
                 if (data.includes('Pendaftaran berjaya')) {
                     alert(data);
                     form.reset();
+                    // Redirect to sign-in section and prefill the username
+                    try {
+                        const signinInput = document.getElementById('signin_username');
+                        if (signinInput) signinInput.value = username.trim();
+                        showSection('signin');
+                    } catch (e) {
+                        // fallback: reload to root which will show home
+                        window.location.href = window.location.pathname;
+                    }
                 } else {
                     const out = document.getElementById('signup-result');
                     if (out) {
@@ -442,6 +464,19 @@
         addUserFormEl.addEventListener('submit', function(e) {
             e.preventDefault();
             const form = e.target;
+            // Client-side validation: username must be one letter followed by 4 digits
+            const username = (form.querySelector('[name="username"]') || {}).value || '';
+            const usernamePattern = /^[A-Za-z][0-9]{4}$/;
+            const addOut = document.getElementById('add-user-result');
+            if (!usernamePattern.test(username.trim())) {
+                if (addOut) {
+                    addOut.textContent = 'ID tidak sah. Gunakan satu huruf diikuti 4 nombor (contoh: D6261).';
+                    addOut.style.color = '#c0392b';
+                } else {
+                    alert('ID tidak sah. Gunakan satu huruf diikuti 4 nombor (contoh: D6261).');
+                }
+                return;
+            }
             const formData = new FormData(form);
             fetch('index.php', {
                 method: 'POST',

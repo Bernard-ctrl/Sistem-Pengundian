@@ -466,7 +466,21 @@
         });
     }
 
+    // Debounce function
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
     // Admin AJAX functions
+    let latestSearchRequest = { users: 0, votes: 0, candidates: 0, positions: 0 };
     function viewUsers(search = '') {
         currentAdminView = 'users';
         document.getElementById('add-user-form').style.display = 'none';
@@ -515,28 +529,78 @@
     // Search functionality removed, now per section
     function searchUsers(search) {
         currentAdminView = 'users';
+        latestSearchRequest.users++;
+        const reqId = latestSearchRequest.users;
         fetch('index.php?action=view_users&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
             .then(res => res.text())
-            .then(data => document.getElementById('admin-output').innerHTML = data);
+            .then(data => {
+                if (reqId !== latestSearchRequest.users) return; // ignore stale response
+                document.getElementById('admin-output').innerHTML = data;
+                const input = document.getElementById('userSearch');
+                if (input) {
+                    input.focus();
+                    input.setSelectionRange(search.length, search.length);
+                }
+            })
+            .catch(() => {});
     }
     function searchCandidates(search) {
         currentAdminView = 'candidates';
+        latestSearchRequest.candidates++;
+        const reqId = latestSearchRequest.candidates;
         fetch('index.php?action=view_candidates&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
             .then(res => res.text())
-            .then(data => document.getElementById('admin-output').innerHTML = data);
+            .then(data => {
+                if (reqId !== latestSearchRequest.candidates) return;
+                document.getElementById('admin-output').innerHTML = data;
+                const input = document.getElementById('candidateSearch');
+                if (input) {
+                    input.focus();
+                    input.setSelectionRange(search.length, search.length);
+                }
+            })
+            .catch(() => {});
     }
     function searchPositions(search) {
         currentAdminView = 'positions';
+        latestSearchRequest.positions++;
+        const reqId = latestSearchRequest.positions;
         fetch('index.php?action=view_positions&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
             .then(res => res.text())
-            .then(data => document.getElementById('admin-output').innerHTML = data);
+            .then(data => {
+                if (reqId !== latestSearchRequest.positions) return;
+                document.getElementById('admin-output').innerHTML = data;
+                const input = document.getElementById('positionSearch');
+                if (input) {
+                    input.focus();
+                    input.setSelectionRange(search.length, search.length);
+                }
+            })
+            .catch(() => {});
     }
     function searchVotes(search) {
         currentAdminView = 'votes';
+        latestSearchRequest.votes++;
+        const reqId = latestSearchRequest.votes;
         fetch('index.php?action=view_votes&search=' + encodeURIComponent(search), { credentials: 'same-origin' })
             .then(res => res.text())
-            .then(data => document.getElementById('admin-output').innerHTML = data);
+            .then(data => {
+                if (reqId !== latestSearchRequest.votes) return;
+                document.getElementById('admin-output').innerHTML = data;
+                const input = document.getElementById('voteSearch');
+                if (input) {
+                    input.focus();
+                    input.setSelectionRange(search.length, search.length);
+                }
+            })
+            .catch(() => {});
     }
+
+    // Debounced search functions
+    const debouncedSearchUsers = debounce(searchUsers, 300);
+    const debouncedSearchVotes = debounce(searchVotes, 300);
+    const debouncedSearchCandidates = debounce(searchCandidates, 300);
+    const debouncedSearchPositions = debounce(searchPositions, 300);
 
     // Simple mobile nav toggle
     const navToggle = document.getElementById('navToggle');

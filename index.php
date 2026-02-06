@@ -376,7 +376,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         $stmt->execute();
         $result = $stmt->get_result();
         echo "<h3>Senarai Pengguna</h3>";
-        echo "<input type='text' id='userSearch' placeholder='Cari pengguna...' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchUsers(this.value)'>";
+        echo "<input type='text' id='userSearch' placeholder='Cari pengguna...' value='" . htmlspecialchars($search) . "' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchUsers(this.value)'>";
         echo "<table style='width:100%;border-collapse:collapse;'><thead><tr><th style='border:1px solid #ddd;padding:8px;text-align:left;'>ID Pengguna</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Nama</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Status</th><th style='border:1px solid #ddd;padding:8px;text-align:left;'>Tindakan</th></tr></thead><tbody>";
         while ($row = $result->fetch_assoc()) {
             $adminLabel = $row['is_admin'] ? "Admin" : "Pengguna Biasa";
@@ -413,7 +413,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         $stmt->execute();
         $result = $stmt->get_result();
         echo "<h3>Senarai Undian</h3>";
-        echo "<input type='text' id='voteSearch' placeholder='Cari undian...' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchVotes(this.value)'>";
+        echo "<input type='text' id='voteSearch' placeholder='Cari undian...' value='" . htmlspecialchars($search) . "' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchVotes(this.value)'>";
         $currentPos = null;
         echo "<div>";
         while ($row = $result->fetch_assoc()) {
@@ -468,7 +468,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         $stmt->execute();
         $result = $stmt->get_result();
         echo "<h3>Senarai Calon</h3>";
-        echo "<input type='text' id='candidateSearch' placeholder='Cari calon...' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchCandidates(this.value)'>";
+        echo "<input type='text' id='candidateSearch' placeholder='Cari calon...' value='" . htmlspecialchars($search) . "' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchCandidates(this.value)'>";
         echo "<ul>";
         while ($row = $result->fetch_assoc()) {
             echo "<li>" . htmlspecialchars($row['id_Calon']) . " - " . htmlspecialchars($row['nama_Calon']) . "</li>";
@@ -495,7 +495,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         $stmt->execute();
         $result = $stmt->get_result();
         echo "<h3>Senarai Jawatan</h3>";
-        echo "<input type='text' id='positionSearch' placeholder='Cari jawatan...' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchPositions(this.value)'>";
+        echo "<input type='text' id='positionSearch' placeholder='Cari jawatan...' value='" . htmlspecialchars($search) . "' style='width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;' oninput='searchPositions(this.value)'>";
         echo "<ul>";
         while ($row = $result->fetch_assoc()) {
             echo "<li>" . htmlspecialchars($row['id_Jawatan']) . " - " . htmlspecialchars($row['nama_Jawatan']) . "</li>";
